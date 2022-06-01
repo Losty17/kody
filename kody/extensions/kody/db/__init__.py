@@ -1,6 +1,6 @@
 from typing import List
 from sqlalchemy import func
-from .models import Question, User
+from .models import *
 from ....db import DatabaseCore
 
 

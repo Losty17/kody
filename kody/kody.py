@@ -6,7 +6,7 @@ from typing import List
 from discord import Intents, Object
 from discord.ext import commands
 
-from kody.extensions import *
+from .extensions import *
 
 guilds = [
     Object(id=getenv("KODY")),
