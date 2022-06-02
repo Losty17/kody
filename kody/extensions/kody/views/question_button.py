@@ -1,6 +1,6 @@
 from typing import List
 
-from discord import ButtonStyle, Interaction, User
+from discord import ButtonStyle, Interaction, User, Color
 from discord.ui import Button, View
 
 from ..embed import QuestionEmbed
@@ -26,15 +26,21 @@ class QuestionButton(Button):
         self.author = author
 
     async def callback(self, interaction: Interaction) -> None:
+        m = interaction.message.embeds[0]
+        
         if self.ans == self.right_ans:
+            m.color = 0x34eb34
             self.style = ButtonStyle.green
-            msg = "Você acertou!"
+            msg = "correta!"
             db.get_user(interaction.user.id).update_node(self.node)
         else:
+            m.color = 0xeb3434
             self.style = ButtonStyle.red
-            msg = "Você errou..."
+            msg = "incorreta..."
 
         for btn in self.buttons:
             btn.disabled = True
 
-        await interaction.response.edit_message(content=msg, view=self.view)
+
+
+        await interaction.response.edit_message(content=f"{interaction.user.mention}, sua resposta estava {msg}", embed=m, view=self.view)

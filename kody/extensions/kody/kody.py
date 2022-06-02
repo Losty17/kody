@@ -41,7 +41,7 @@ class Kody(commands.Cog):
         if question:
             question_embed = QuestionEmbed(question)
 
-            await interaction.followup.send(embed=question_embed, view=QuestionUi(question, author=interaction.user))
+            await interaction.followup.send(f"{interaction.user.mention}", embed=question_embed, view=QuestionUi(question, author=interaction.user))
         else:
             await interaction.followup.send("Ocorreu um erro ao procurar uma questão.", ephemeral=True)
 

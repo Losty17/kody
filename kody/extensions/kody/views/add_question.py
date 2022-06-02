@@ -4,7 +4,7 @@ from discord import Interaction, SelectOption, TextStyle
 from discord.ui import Select, View, Modal, TextInput
 
 from ..database import db
-from .. import Question, NodeEnum, NODE_EMOJIS
+from .. import Question, NodeEnum, NODE_EMOJIS, NODE_TRANSLATIONS
 
 
 class NodeModal(Modal):
@@ -70,7 +70,7 @@ class NodeSelector(Select):
         options = []
         for n in NodeEnum:
             options.append(SelectOption(
-                label=n.name.capitalize(), emoji=NODE_EMOJIS[n.name], value=n.name))
+                label=NODE_TRANSLATIONS[n.name], emoji=NODE_EMOJIS[n.name], value=n.name))
 
         super().__init__(
             placeholder="Selecione um node...",
