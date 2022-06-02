@@ -1,3 +1,3 @@
-from .db import KodyDatabase
+from . import KodyDatabase
 
 db: KodyDatabase = KodyDatabase()

@@ -19,3 +19,14 @@ NODE_EMOJIS = {
     "hardware": "🖱️",
     "software": "📀",
 }
+
+NODE_TRANSLATIONS = {
+    "web": "Web",
+    "data": "Dados",
+    "design": "Design",
+    "coding": "Programação",
+    "network": "Redes",
+    "robotics": "Robótica",
+    "hardware": "Hardware",
+    "software": "Software",
+}

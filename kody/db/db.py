@@ -1,12 +1,32 @@
+from os import getenv
 from typing import List
-from sqlalchemy import func
+
+from sqlalchemy import create_engine, func
+from sqlalchemy.orm import Session as s
+from sqlalchemy.orm import declarative_base, sessionmaker
+
 from .models import *
-from ....db import DatabaseCore
+from . import Base
 
 
-class KodyDatabase(DatabaseCore):
+class KodyDatabase():
     def __init__(self) -> None:
         super().__init__()
+
+        db_uri = getenv("DATABASE_URI") if getenv(
+            "ENVIRONMENT").lower() == "production" else "sqlite:///:memory:"
+        self.engine = create_engine(db_uri)
+        Base.metadata.bind = self.engine
+        Session = sessionmaker(bind=Base.metadata.bind, autocommit=True)
+
+        self.session: s = Session()
+
+    def sync(self):
+        with self.engine.begin() as conn:
+            Base.metadata.drop_all()
+            Base.metadata.create_all()
+            # conn.run(Base.metadata.drop_all)
+            # conn.execute(Base.metadata.create_all)
 
     def create_user(self, user: User) -> User:
         with self.session.begin():

@@ -4,7 +4,7 @@ from discord import Interaction, SelectOption, TextStyle
 from discord.ui import Select, View, Modal, TextInput
 
 from ..database import db
-from ..db.models import Question, NodeEnum, NODE_EMOJIS
+from .. import Question, NodeEnum, NODE_EMOJIS
 
 
 class NodeModal(Modal):

@@ -4,14 +4,14 @@ from typing import Optional
 
 from discord import Interaction, Member, app_commands
 from discord.ext import commands
-from ...kody import KodyBot
 
-from .groups import KodyStaff
+from ...kody import KodyBot
+from . import Question
 from .checks import *
 from .database import db
-from .db.models import Question
-from .views import QuestionUi
 from .embed import QuestionEmbed
+from .groups import KodyStaff
+from .views import QuestionUi
 
 
 class Kody(commands.Cog):

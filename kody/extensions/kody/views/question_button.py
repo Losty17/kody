@@ -6,7 +6,7 @@ from discord.ui import Button, View
 from ..embed import QuestionEmbed
 
 from ..database import db
-from ..db.models.enums import NodeEnum
+from .. import NodeEnum
 
 
 class QuestionButton(Button):

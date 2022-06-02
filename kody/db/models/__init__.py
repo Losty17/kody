@@ -1,12 +1,13 @@
 from datetime import datetime
 
-from .question import Question
-from .user import User
 from sqlalchemy import *
 from sqlalchemy.sql import func
+
+from .. import Base
 from .enums import *
 from .mappings import *
-from .....db import Base
+from .question import Question
+from .user import User
 
 
 class Vip(Base):
@@ -28,7 +29,7 @@ class Node(Base):
 
 
 class _User(Base):
-    __tablename__ = "users"
+    __tablename__ = "_users"
     id: int = Column(BigInteger, primary_key=True)
     ref_vip: int = Column(Integer, ForeignKey("vips.id"), index=True)
 
@@ -50,7 +51,7 @@ class UserBit(Base):
 
 
 class _Question(Base):
-    __tablename__ = "questions"
+    __tablename__ = "_questions"
     id: int = Column(Integer, primary_key=True, autoincrement=True)
     ref_node: int = Column(Integer, ForeignKey("nodes.id"), index=True)
     text: str = Column(String(200), nullable=False)
@@ -114,7 +115,7 @@ class UserSocial(Base):
 
 class UserProfile(Base):
     __tablename__ = "user_profiles"
-
+    id: int = Column(Integer, primary_key=True, autoincrement=True)
     ref_user: int = Column(BigInteger, ForeignKey("users.id"), index=True)
     featured_badge: int = Column(Integer, ForeignKey("badges.id"))
     nickname: str = Column(String(30), nullable=False)

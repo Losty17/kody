@@ -1,2 +1,5 @@
-from .base import Base
-from .database import DatabaseCore
+from sqlalchemy.orm import declarative_base
+
+Base = declarative_base()
+
+from .db import *

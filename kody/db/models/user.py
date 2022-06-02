@@ -1,6 +1,6 @@
 from sqlalchemy import BigInteger, Column, DateTime, Enum, Integer
 
-from .....db import Base
+from .. import Base
 from .enums import NodeEnum, VipEnum
 
 

@@ -3,7 +3,7 @@ from typing import Any, Optional, Union
 
 from discord import Colour, Embed
 
-from ..db import Question
+from .. import Question
 from .... import bot
 
 

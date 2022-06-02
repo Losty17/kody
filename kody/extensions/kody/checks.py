@@ -1,9 +1,7 @@
 from datetime import datetime, timedelta
 from discord import Interaction, app_commands
 
-from .db import KodyDatabase
-from .db.models import User
-from .db.models.enums import VipEnum
+from . import KodyDatabase, User, VipEnum
 
 
 def check_permission():

@@ -2,7 +2,7 @@ from typing import List
 
 from sqlalchemy import Column, DateTime, Enum, Integer, String
 
-from .....db import Base
+from .. import Base
 from .enums import NodeEnum
 
 

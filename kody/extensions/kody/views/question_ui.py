@@ -2,7 +2,7 @@ from random import shuffle
 from discord import User
 
 from discord.ui import View
-from ..db.models import Question
+from .. import Question
 
 from . import QuestionButton
 

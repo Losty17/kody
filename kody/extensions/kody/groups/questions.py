@@ -9,9 +9,9 @@ from discord import Attachment, Interaction, Member
 from discord.app_commands import (Choice, Group, choices, command, describe,
                                   rename)
 
+from .. import Question
 from ..checks import *
 from ..database import db
-from ..db.models import Question
 from ..views import SelectorView
 
 
