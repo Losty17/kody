@@ -1,0 +1,3 @@
+[submodule "kody_api"]
+	path = kody_api
+	url = https://github.com/Losty17/kody_api.git
