@@ -7,7 +7,11 @@ from .kody import KodyBot
 
 load_dotenv()
 
-intents = Intents.all()
+kody = KodyBot(
+    ">",
+    intents=Intents.all(),
+    application_id=int(getenv("APP_ID")),
+    owner_id=int(getenv("OWNER_ID"))
+)
 
-bot = KodyBot("k!", intents=intents, application_id=getenv(
-    "APP_ID"), owner_id=getenv("OWNER_ID"))
+kody.run(getenv("BOT_TOKEN"))

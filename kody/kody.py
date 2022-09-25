@@ -1,41 +1,39 @@
+from datetime import datetime
 from os import getenv, listdir, path
 from pathlib import Path
-from traceback import print_exc
 from typing import List
 
-from discord import Intents, Object
+from discord import Activity, ActivityType, Intents, Object, Status
 from discord.ext import commands
 
-from .extensions import *
-
-guilds = [
-    Object(id=getenv("KODY")),
-]
+from .logger import setup_logger
 
 
 class KodyBot(commands.Bot):
     package = 'kody'
-    ext_dir = 'extensions'
+    module_dir = 'modules'
     root_dir = Path(__file__).parent.resolve()
 
     def __init__(self, command_prefix: str, *, intents: Intents, application_id: int, owner_id: int) -> None:
         super().__init__(
             command_prefix,
             intents=intents,
-            application_id=application_id,
+            application_id=application_id
         )
+        self.owner_id = owner_id
 
-        self.owner_id = int(owner_id)
+        self.modules = self.get_extensions(self.module_dir)
 
-        self.ext = self.get_extensions(self.ext_dir)
+        self.dev_guilds = [Object(guild)
+                           for guild in getenv("GUILDS").split(",")]
 
-        self.glds = guilds
+        self.logger = setup_logger()
 
     async def setup_hook(self) -> None:
-        await self.load_modules(self.ext)
-        await self.sync()
+        await self.load_modules(self.modules)
         # await self._clear_global_commands()
         # await self._global_sync()
+        await self.sync()
 
     async def load_modules(self, extensions: List[str]) -> None:
         """Loads the specified extensions
@@ -45,12 +43,10 @@ class KodyBot(commands.Bot):
         """
         for e in extensions:
             try:
-                print(f"Loading: {self.package}{e}...", end=' ')
+                self.logger.info(f"Loading {self.package}{e}")
                 await self.load_extension(e, package=self.package)
-                print('Ok!')
             except Exception as ex:
-                print(f"Failed.")
-                print_exc(ex)
+                self.logger.exception(f"Failed:")
 
     def get_extensions(self, directory: str) -> List[str]:
         """Get the bot's extensions from the specified directory
@@ -60,43 +56,49 @@ class KodyBot(commands.Bot):
         Returns:
             List[str]: a list containing all the extensions
         """
-        file_list = listdir(
-            path.join(
-                self.root_dir,
-                directory
-            )
-        )
-
-        return [f'.{directory}.{e}' for e in file_list if not e.endswith('__') and not e.endswith('.md')]
+        file_list = listdir(path.join(self.root_dir, directory))
+        return [f'.{directory}.{file}' for file in file_list if not "." in file]
 
     async def sync(self) -> None:
         """ Sync the commands to the specified guilds """
-        print('\nSyncing commands...', end=' ')
-        for g in self.glds:
+        self.logger.debug('Syncing commands')
+        before = datetime.utcnow()
+        for g in self.dev_guilds:
             self.tree.copy_global_to(guild=g)
             await self.tree.sync(guild=g)
-        print('Ok!')
 
-    async def _global_sync(self) -> None:
+        elapsed = (datetime.utcnow() - before).total_seconds()
+
+        self.logger.debug(
+            f"Done! ({f'{round(elapsed, 2)}s' if elapsed > 1 else f'{round(elapsed* 1000)}ms'} elapsed)")
+
+    async def __global_sync(self) -> None:
         """ Sync commands globally """
-        print('\nSyncing commands globally...')
+        self.logger.warn('Syncing commands globally')
 
-        for g in self.glds:
-            print('\nClearing guild commands', end=' ')
-            print(f'from: {g.id}', end=' ')
+        for g in self.dev_guilds:
+            self.logger.warn(f'Clearing guild commands from: {g.id}')
             self.tree.clear_commands(guild=g)
-            print('Ok!', end=' Syncing... ')
+            self.logger.warn(f'Syncing commands for: {g.id}')
             await self.tree.sync(guild=g)
-            print('Ok!', end=' ')
 
-        print('\nSyncing...')
+        self.logger.warn('Syncing tree')
         await self.tree.sync()
-        print('Done!')
 
-    async def _clear_global_commands(self) -> None:
-        print('\nClearing global commands...', end=' ')
+    async def __clear_global_commands(self) -> None:
+        self.logger.warn('Clearing global commands')
         self.tree.clear_commands(guild=None)
-        print('Ok!')
-        print('Syncing...', end=' ')
+        self.logger.warn('Syncing global tree')
         await self.tree.sync(guild=None)
-        print('Ok!')
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        await self.change_presence(
+            status=Status.idle,
+            activity=Activity(
+                name="cantigas de ninar",
+                type=ActivityType.listening
+            )
+        )
+
+        self.logger.info(f'Logged in as {self.user} (ID: {self.user.id})')

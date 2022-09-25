@@ -1,10 +1,8 @@
-from typing import Optional
-
 from discord import Interaction, SelectOption, TextStyle
-from discord.ui import Select, View, Modal, TextInput
+from discord.ui import Modal, Select, TextInput, View
 
+from ....db import NODE_EMOJIS, NODE_TRANSLATIONS, NodeEnum, Question
 from ..database import db
-from .. import Question, NodeEnum, NODE_EMOJIS, NODE_TRANSLATIONS
 
 
 class NodeModal(Modal):

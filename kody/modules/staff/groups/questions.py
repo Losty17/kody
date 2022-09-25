@@ -9,16 +9,15 @@ from discord import Attachment, Interaction, Member
 from discord.app_commands import (Choice, Group, choices, command, describe,
                                   rename)
 
-from .. import Question
 from ..checks import *
-from ..database import db
+from ..database import *
 from ..views import SelectorView
 
 
 class KodyQuestions(Group):
     def __init__(self):
         super().__init__(name="questions",
-                         description="Question Administration Command")
+                         description="Question Administration Commands")
 
     @command(name="add")
     async def _add(self, interaction: Interaction):
@@ -83,7 +82,6 @@ class KodyQuestions(Group):
                     f'Cooldown reseted for user `{user.id}`. ' +
                     f'New cooldown: `{user.last_question}`', ephemeral=True
                 )
-
                 return
 
     @command(name="model")

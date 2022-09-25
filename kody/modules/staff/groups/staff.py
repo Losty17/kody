@@ -1,6 +1,6 @@
+from discord import Interaction
 from discord.app_commands import Group, guild_only
 
-from ..checks import *
 from . import KodyQuestions, KodyUsers
 
 

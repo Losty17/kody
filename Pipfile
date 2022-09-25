@@ -14,6 +14,7 @@ requests = "*"
 sqlalchemy = "*"
 aiosqlite = "*"
 psycopg2-binary = "*"
+jurigged = "*"
 
 [dev-packages]
 
