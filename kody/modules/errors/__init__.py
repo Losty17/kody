@@ -68,7 +68,7 @@ class Errors(commands.Cog):
 
         # Send the message the right way
         async def send_message(handle_origin, msg: str):
-            if (handle_origin == commands.Context):
+            if handle_origin == commands.Context:
                 # Simulate an ephemeral message
                 await ctx.send(msg, delete_after=15)
             else:

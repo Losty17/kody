@@ -49,7 +49,7 @@ class QuestionButton(Button):
             m.color = 0x34eb34
             self.style = ButtonStyle.green
             msg = "correta!"
-            db.get_user(interaction.user.id).update_node(self.node)
+            db.get_user(interaction.user.id).increase_node(self.node)
         else:
             m.color = 0xeb3434
             self.style = ButtonStyle.red

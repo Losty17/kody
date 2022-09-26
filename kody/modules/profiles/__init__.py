@@ -1,11 +1,13 @@
 from typing import Optional
 
-from discord import Interaction, Member
+from discord import AllowedMentions, Interaction, Member
 from discord.app_commands import command
 from discord.ext.commands import Cog
 
 from ..staff import KodyBot
 from ..staff.database import db
+from .embeds import ProfileEmbed
+from .views import ProfileView
 
 
 class Profiles(Cog):
@@ -16,25 +18,15 @@ class Profiles(Cog):
     async def _user_data(self, interaction: Interaction, member: Optional[Member] = None):
         target = member or interaction.user
 
-        user = db.get_user(target.id)
+        embed = ProfileEmbed(interaction.guild.get_member(target.id))
+        view = ProfileView()
 
-        data = f'''
-id: {user.id}
-vip: {user.vip}
-last_vote: {user.last_vote}
-last_question: {user.last_question}
-----
-web: {user.web_bits}
-data: {user.data_bits}
-design: {user.design_bits}
-coding: {user.coding_bits}
-network: {user.network_bits}
-robotics: {user.robotics_bits}
-hardware: {user.hardware_bits}
-software: {user.software_bits}
-        '''
-
-        await interaction.response.send_message(data)
+        await interaction.response.send_message(
+            interaction.user.mention,
+            embed=embed,
+            view=view,
+            allowed_mentions=AllowedMentions.none()
+        )
 
 
 async def setup(bot: KodyBot) -> None:

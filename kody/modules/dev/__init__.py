@@ -3,8 +3,10 @@ from discord.app_commands import Choice, Group, choices, describe
 from discord.ext import commands
 
 from ... import kody
+from ...db import NodeEnum
 from ...kody import KodyBot
 from ...utils import is_owner
+from ..staff.database import db
 
 module_list = [Choice(name=module.split(".")[2], value=module)
                for module in kody.modules]
@@ -86,6 +88,13 @@ class Dev(commands.Cog):
             )
         else:
             await interaction.followup.send(f'`{fqn}` foi recarregado com sucesso', ephemeral=True)
+
+    @dev.command()
+    @is_owner()
+    async def test(self, interaction: Interaction):
+        user = db.get_user(interaction.user.id)
+        user.increase_node(NodeEnum.coding)
+        await interaction.response.send_message(user.get_global_xp())
 
 
 async def setup(bot: commands.Bot) -> None:

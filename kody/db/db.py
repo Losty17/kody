@@ -3,10 +3,10 @@ from typing import List
 
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import Session as s
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import sessionmaker
 
-from .models import *
 from . import Base
+from .models import *
 
 
 class KodyDatabase():
