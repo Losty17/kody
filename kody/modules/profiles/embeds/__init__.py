@@ -1,6 +1,6 @@
 from datetime import timezone
 
-from discord import Embed, Member
+from discord import Embed, Member, Colour
 from StringProgressBar import progressBar as pb
 
 from ...staff.database import db
@@ -11,7 +11,7 @@ class ProfileEmbed(Embed):
         super().__init__()
         user = db.get_user(member.id)
 
-        self.color = 0xffaaaa
+        self.color = Colour.from_str(user.color)
 
         self.title = member.nick or member.name
         self.description = "***Desenvolvedor de Software***\n\n" + user.bio

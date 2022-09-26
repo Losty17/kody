@@ -19,6 +19,7 @@ class User(Base):
 
     # Profile
     bio = Column(String(200), server_default='Isso aqui está tão vazio...')
+    color = Column(String(7), server_default='#ffffff')
     badges = Column(String(255), server_default='')
 
     # Statistics
