@@ -4,7 +4,6 @@ from sqlalchemy.sql import func
 from .. import Base
 from .enums import NodeEnum, VipEnum
 
-
 class User(Base):
     __tablename__ = 'users'
 
@@ -42,11 +41,12 @@ class User(Base):
         else:
             raise Exception("Bit array size doesn't match default node size")
 
-    def increase_node(self, node: NodeEnum):
+    def increase_node(self, node: NodeEnum, amount: int = 1):
+        # TODO: create a class for the dict with custom get and set for nodes
         bits = self.bits
-        bits[node.name] += 1
+        bits[node.name] += amount
 
         self.__bits = ";".join(str(i) for i in bits.values())
+        self.quests_right += amount
 
-    def get_global_xp(self) -> int:
-        return sum(self.bits.values())
+        return self

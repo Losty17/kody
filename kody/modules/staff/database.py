@@ -1,3 +1,3 @@
 from ...db import *
 
-db: KodyDatabase = KodyDatabase()
+db: Database = Database()

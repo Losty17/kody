@@ -2,24 +2,26 @@ from discord import Interaction
 from discord.app_commands import Choice, Group, choices, describe
 from discord.ext import commands
 
+from kody.db.repositories.user_repo import UserRepository
+
 from ... import kody
 from ...db import NodeEnum
 from ...kody import KodyBot
 from ...utils import is_owner
-from ..staff.database import db
+from .. import BaseCog
 
 module_list = [Choice(name=module.split(".")[2], value=module)
                for module in kody.modules]
 
 
-class Dev(commands.Cog):
+class Dev(BaseCog):
     dev = Group(
         name="dev",
         description="Developer commands",
     )
 
     def __init__(self, bot: KodyBot) -> None:
-        self.bot = bot
+        super().__init__(bot)
 
     @dev.command()
     @describe(module="Module to be loaded")
@@ -91,10 +93,17 @@ class Dev(commands.Cog):
 
     @dev.command()
     @is_owner()
-    async def test(self, interaction: Interaction):
-        user = db.get_user(interaction.user.id)
-        user.increase_node(NodeEnum.coding)
-        await interaction.response.send_message(user.get_global_xp())
+    @choices(
+        node=[Choice(name=node.name, value=node.name) for node in NodeEnum]
+    )
+    async def give_bits(self, interaction: Interaction, node: str, amount: int = 1):
+        """ Give bits to a user """
+        user_repo = UserRepository()
+
+        user = user_repo.get(interaction.user.id).increase_node(NodeEnum[node], amount)
+        user_repo.update(user)
+
+        await interaction.response.send_message(user.quests_right)
 
 
 async def setup(bot: commands.Bot) -> None:

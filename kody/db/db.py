@@ -1,45 +1,29 @@
-from os import getenv
 from typing import List
 
-from sqlalchemy import create_engine, func
-from sqlalchemy.orm import Session as s
+from sqlalchemy import func
 from sqlalchemy.orm import sessionmaker
 
 from . import Base
 from .models import *
 
+session = None
 
-class KodyDatabase():
+class Database():
     def __init__(self) -> None:
         super().__init__()
 
-        db_uri = getenv("DATABASE_URI") if getenv(
-            "ENVIRONMENT").lower() == "production" else "sqlite:///:memory:"
-        self.engine = create_engine(db_uri)
-        Base.metadata.bind = self.engine
         Session = sessionmaker(bind=Base.metadata.bind, autocommit=True)
+        self.session = Session()
 
-        self.session: s = Session()
+    @classmethod
+    def get_instance(self):
+        return sessionmaker(bind=Base.metadata.bind, autocommit=True)()
 
     def sync(self):
-        with self.engine.begin() as conn:
-            Base.metadata.drop_all()
-            Base.metadata.create_all()
-            # conn.run(Base.metadata.drop_all)
-            # conn.execute(Base.metadata.create_all)
+        Base.metadata.drop_all()
+        Base.metadata.create_all()
 
-    def create_user(self, user: User) -> User:
-        with self.session.begin():
-            self.session.add(user)
-
-        return user
-
-    def get_user(self, _id: int) -> User | None:
-        with self.session.begin():
-            user = self.session.query(User).filter_by(id=_id).first()
-
-        return user
-
+    
     def add_question(self, question: Question) -> Question:
         with self.session.begin():
             self.session.add(question)

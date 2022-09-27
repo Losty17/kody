@@ -9,7 +9,7 @@ from ...staff.database import db
 class ProfileEmbed(Embed):
     def __init__(self, member: Member):
         super().__init__()
-        user = db.get_user(member.id)
+        user = db.user_repo.get(member.id)
 
         self.color = Colour.from_str(user.color)
 

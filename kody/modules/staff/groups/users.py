@@ -4,6 +4,8 @@ from discord import Interaction, Member
 from discord.app_commands import (Choice, Group, choices, command, describe,
                                   rename)
 
+from kody.db.repositories.user_repo import UserRepository
+
 from ..checks import *
 from ..database import db
 
@@ -65,7 +67,8 @@ class KodyUsers(Group):
 
         _vip = vip or VipEnum.none
         user = User(id=member.id, vip=_vip.name)
-        db.create_user(user)
+        
+        UserRepository().add(user)
 
         msg = f"Obrigado por se juntar a nós, {member.mention}!"
         if _vip != VipEnum.none:

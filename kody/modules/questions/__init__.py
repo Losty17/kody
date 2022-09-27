@@ -4,29 +4,31 @@ from discord import Interaction
 from discord.app_commands import CommandOnCooldown, command
 from discord.ext.commands import Cog
 
+from ...db.db import Database
+from .. import BaseCog
 from ..staff import KodyBot
 from ..staff.checks import check_cooldown, ensure_user_created
-from ..staff.database import db
 from .embeds import QuestionEmbed
 from .views import QuestionUi
 
 
-class Questions(Cog):
+class Questions(BaseCog):
     def __init__(self, bot: KodyBot) -> None:
-        self.bot = bot
+        super().__init__(bot)
 
     @command(name="quest")
-    @check_cooldown(db)
-    @ensure_user_created(db)
+    # @check_cooldown()
+    # @ensure_user_created()
     async def _question_command(self, interaction: Interaction):
         """ Responda uma perguntinha! """
+
         # Set the cooldown for the user
         await interaction.response.defer(ephemeral=True, thinking=True)
 
-        user = db.get_user(interaction.user.id)
+        user = self.user_repo.get_user(interaction.user.id)
         user.last_question = datetime.utcnow()
 
-        question = db.get_random_question()
+        question = Database().get_random_question()
 
         if question:
             question_embed = QuestionEmbed(question)

@@ -4,15 +4,15 @@ from discord import AllowedMentions, Interaction, Member
 from discord.app_commands import command
 from discord.ext.commands import Cog
 
+from .. import BaseCog
 from ..staff import KodyBot
-from ..staff.database import db
 from .embeds import ProfileEmbed
 from .views import ProfileView
 
 
-class Profiles(Cog):
+class Profiles(BaseCog):
     def __init__(self, bot: KodyBot) -> None:
-        self.bot = bot
+        super().__init__(bot)
 
     @command(name="profile")
     async def _user_data(self, interaction: Interaction, member: Optional[Member] = None):

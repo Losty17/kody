@@ -6,6 +6,9 @@ from typing import List
 from discord import Activity, ActivityType, Intents, Object, Status
 from discord.ext import commands
 
+from kody.db.repositories.user_repo import UserRepository
+
+from .db import Database
 from .logger import setup_logger
 
 
@@ -57,6 +60,12 @@ class KodyBot(commands.Bot):
             List[str]: a list containing all the extensions
         """
         file_list = listdir(path.join(self.root_dir, directory))
+
+        try:
+            file_list.remove("__pycache__")
+        except ValueError:
+            pass
+        
         return [f'.{directory}.{file}' for file in file_list if not "." in file]
 
     async def sync(self) -> None:

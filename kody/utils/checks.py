@@ -3,7 +3,7 @@ from os import getenv
 
 from discord import Interaction, app_commands
 
-from ..db import KodyDatabase
+from ..db import Database
 from ..db.models import User, VipEnum
 
 
@@ -20,7 +20,7 @@ def check_permission():
     return app_commands.check(predicate)
 
 
-def ensure_user_created(db: KodyDatabase):
+def ensure_user_created(db: Database):
     def predicate(interaction: Interaction) -> bool:
         user = db.get_user(interaction.user.id)
         if not user:
@@ -30,7 +30,7 @@ def ensure_user_created(db: KodyDatabase):
     return app_commands.check(predicate)
 
 
-def check_cooldown(db: KodyDatabase):
+def check_cooldown(db: Database):
     def predicate(interaction: Interaction) -> bool:
         user = db.get_user(interaction.user.id)
         if user is None or user.last_question is None:
