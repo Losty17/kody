@@ -2,7 +2,6 @@ from datetime import datetime
 
 from discord import Interaction
 from discord.app_commands import CommandOnCooldown, command
-from discord.ext.commands import Cog
 
 from ...db import Database
 from .. import BaseCog
@@ -17,8 +16,8 @@ class Questions(BaseCog):
         super().__init__(bot)
 
     @command(name="quest")
-    # @check_cooldown()
-    # @ensure_user_created()
+    @check_cooldown()
+    @ensure_user_created()
     async def _question_command(self, interaction: Interaction):
         """ Responda uma perguntinha! """
 
