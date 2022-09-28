@@ -3,38 +3,36 @@ from os import getenv
 
 from discord import Interaction, app_commands
 
-from ..db import Database
 from ..db.models import User, VipEnum
+from ..db.repositories import UserRepository
 
 
 def is_owner():
     def predicate(interaction: Interaction) -> bool:
-        return interaction.user.id == int(getenv("OWNER_ID"))
+        return interaction.user.id in [int(_id) for _id in getenv("OWNER_ID").split(",")]
     return app_commands.check(predicate)
 
 
-def check_permission():
+def ensure_user_created():
     def predicate(interaction: Interaction) -> bool:
-        role = interaction.user.get_role(980149959435374655)
-        return interaction.guild.id == 501807001324617748 and role
-    return app_commands.check(predicate)
-
-
-def ensure_user_created(db: Database):
-    def predicate(interaction: Interaction) -> bool:
-        user = db.get_user(interaction.user.id)
+        user_repo = UserRepository()
+        user = user_repo.get(interaction.user.id)
+        
         if not user:
-            db.create_user(User(id=interaction.user.id))
+            user_repo.add(User(id=interaction.user.id))
 
         return True
     return app_commands.check(predicate)
 
 
-def check_cooldown(db: Database):
+def check_cooldown():
     def predicate(interaction: Interaction) -> bool:
-        user = db.get_user(interaction.user.id)
+        user_repo = UserRepository()
+        user = user_repo.get(interaction.user.id)
+        
         if user is None or user.last_question is None:
             return True
+        
         diff: timedelta = datetime.utcnow() - user.last_question
         match user.vip:
             case VipEnum.mega:
@@ -59,6 +57,6 @@ def check_cooldown(db: Database):
 
 def is_staff():
     def predicate(interaction: Interaction) -> bool:
-        staff_ids = [207947146371006464, 333457501817405442]
+        staff_ids = [int(_id) for _id in getenv("OWNER_ID").split(",")]
         return interaction.user.id in staff_ids
     return app_commands.check(predicate)

@@ -4,7 +4,7 @@ from discord import Interaction
 from discord.app_commands import CommandOnCooldown, command
 from discord.ext.commands import Cog
 
-from ...db.db import Database
+from ...db import Database
 from .. import BaseCog
 from ..staff import KodyBot
 from ..staff.checks import check_cooldown, ensure_user_created

@@ -13,13 +13,18 @@ class Question(Base):
     node: NodeEnum = Column(Enum(NodeEnum), nullable=False)
     text: str = Column(String(200), nullable=False)
 
-    right_ans: str = Column(String(200), nullable=False)
-    first_ans: str = Column(String(200), nullable=False)
-    second_ans: str = Column(String(200), server_default='')
-    third_ans: str = Column(String(200), server_default='')
+    right_ans: str = Column(String(80), nullable=False)
+    first_ans: str = Column(String(80), nullable=False)
+    second_ans: str = Column(String(80), server_default='')
+    third_ans: str = Column(String(80), server_default='')
 
     def __repr__(self) -> str:
         return f"<Question id={self.id} node={self.node}>"
 
     def get_answers(self) -> List[str]:
+        """Returns the list of answers, with the 0 index being the correct answer
+
+        Returns:
+            List[str]: answers
+        """
         return [self.right_ans, self.first_ans, self.second_ans, self.third_ans]

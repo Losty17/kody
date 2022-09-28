@@ -4,10 +4,8 @@ from discord import Interaction, Member
 from discord.app_commands import (Choice, Group, choices, command, describe,
                                   rename)
 
-from kody.db.repositories.user_repo import UserRepository
-
+from ....db.repositories import UserRepository
 from ..checks import *
-from ..database import db
 
 
 class KodyUsers(Group):
@@ -27,7 +25,7 @@ class KodyUsers(Group):
     async def _add_vip(self, interaction: Interaction, member: Member, vip: Choice[str]):
         """ Gerencia o cargo VIP de um usuário """
 
-        user = db.get_user(member.id)
+        user = UserRepository().get_user(member.id)
         if not user:
             return await interaction.response.send_message("Não consegui encontrar o cadastro do usuário")
 

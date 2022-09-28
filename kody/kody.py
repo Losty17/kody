@@ -6,9 +6,6 @@ from typing import List
 from discord import Activity, ActivityType, Intents, Object, Status
 from discord.ext import commands
 
-from kody.db.repositories.user_repo import UserRepository
-
-from .db import Database
 from .logger import setup_logger
 
 

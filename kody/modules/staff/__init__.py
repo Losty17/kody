@@ -2,8 +2,8 @@ import os
 
 from discord.ext import commands
 
+from ...db import Database
 from ...kody import KodyBot
-from .database import db
 from .groups import KodyStaff
 
 
@@ -15,7 +15,7 @@ class Staff(commands.Cog):
 
         # --- Debug ---
         if os.getenv("ENVIRONMENT").lower() != "production":
-            db.sync()
+            Database.sync()
 
 
 async def setup(bot: KodyBot) -> None:

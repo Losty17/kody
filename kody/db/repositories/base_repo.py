@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from typing import Generic, TypeVar
 
-from ..db import Database
+from .. import Database
 
 T = TypeVar("T")
 

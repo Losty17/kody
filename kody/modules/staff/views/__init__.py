@@ -2,7 +2,7 @@ from discord import Interaction, SelectOption, TextStyle
 from discord.ui import Modal, Select, TextInput, View
 
 from ....db import NODE_EMOJIS, NODE_TRANSLATIONS, NodeEnum, Question
-from ..database import db
+from ....db.repositories import QuestionRepository
 
 
 class NodeModal(Modal):
@@ -48,7 +48,7 @@ class NodeModal(Modal):
             title=f"Adicionando questão sobre {node}", timeout=None)
 
     async def on_submit(self, interaction: Interaction):
-        quest = db.add_question(Question(
+        quest = QuestionRepository().add_question(Question(
             node=self.node,
             text=self.quest.value,
             right_ans=self.right_ans.value,

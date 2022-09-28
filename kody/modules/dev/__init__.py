@@ -2,7 +2,7 @@ from discord import Interaction
 from discord.app_commands import Choice, Group, choices, describe
 from discord.ext import commands
 
-from kody.db.repositories.user_repo import UserRepository
+from ...db.repositories import UserRepository
 
 from ... import kody
 from ...db import NodeEnum

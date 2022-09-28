@@ -9,8 +9,9 @@ from discord import Attachment, Interaction, Member
 from discord.app_commands import (Choice, Group, choices, command, describe,
                                   rename)
 
+from ....db.models import Question
+from ....db.repositories import QuestionRepository, UserRepository
 from ..checks import *
-from ..database import *
 from ..views import SelectorView
 
 
@@ -61,7 +62,7 @@ class KodyQuestions(Group):
             except:
                 continue
 
-        db.bulk_add_question(questions)  # Adicionando ao banco
+        QuestionRepository().bulk_add_question(questions)  # Adicionando ao banco
 
         await interaction.followup.send(f"Foram adicionadas `{len(questions)}` questões!", ephemeral=True)
 
@@ -75,7 +76,7 @@ class KodyQuestions(Group):
         """ Gerenciador de intervalos para os usuários """
         match option.value:
             case "reset":
-                user = db.get_user(interaction.user.id)
+                user = UserRepository().get_user(interaction.user.id)
                 user.last_question = None
 
                 await interaction.response.send_message(

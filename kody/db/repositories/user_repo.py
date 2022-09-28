@@ -1,5 +1,4 @@
 
-from ..db import Database
 from ..models import User
 from .base_repo import BaseRepo
 

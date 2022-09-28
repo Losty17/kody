@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlalchemy import BigInteger, Column, DateTime, Enum, Integer, String
 from sqlalchemy.sql import func
 
@@ -8,27 +9,27 @@ class User(Base):
     __tablename__ = 'users'
 
     # Basic data
-    id = Column(BigInteger, primary_key=True)
-    __bits = Column('bits', String(64), server_default='0;0;0;0;0;0;0;0')
-    vip = Column(Enum(VipEnum), server_default=VipEnum.none.name)
+    id: int = Column(BigInteger, primary_key=True)
+    __bits: str = Column('bits', String(64), server_default='0;0;0;0;0;0;0;0')
+    vip: VipEnum = Column(Enum(VipEnum), server_default=VipEnum.none.name)
 
     # Cooldowns
-    last_vote = Column(DateTime)
-    last_question = Column(DateTime)
+    last_vote: datetime = Column(DateTime(timezone=True))
+    last_question: datetime = Column(DateTime(timezone=True))
 
     # Profile
-    bio = Column(String(200), server_default='Isso aqui está tão vazio...')
-    color = Column(String(7), server_default='#ffffff')
-    badges = Column(String(255), server_default='')
+    bio: str = Column(String(200), server_default='Isso aqui está tão vazio...')
+    color: str = Column(String(9), server_default='#ffffff')
+    badges: str = Column(String(255), server_default='')
 
     # Statistics
-    quests_seen = Column(Integer, server_default='0')
-    quests_answered = Column(Integer, server_default='0')
-    quests_right = Column(Integer, server_default='0')
+    quests_seen: int = Column(Integer, server_default='0')
+    quests_answered: int = Column(Integer, server_default='0')
+    quests_right: int = Column(Integer, server_default='0')
 
     # Default fields
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at: datetime = Column(DateTime(timezone=True), onupdate=func.now())
 
     def __repr__(self) -> str:
         return f"<User id={self.id}>"

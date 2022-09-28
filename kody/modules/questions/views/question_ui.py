@@ -5,7 +5,7 @@ from discord import ButtonStyle, Interaction, User
 from discord.ui import Button, View
 
 from ....db import Question
-from ...staff.database import db
+from ....db.repositories import UserRepository
 
 
 class QuestionUi(View):
@@ -49,7 +49,7 @@ class QuestionButton(Button):
             m.color = 0x34eb34
             self.style = ButtonStyle.green
             msg = "correta!"
-            db.get_user(interaction.user.id).increase_node(self.node)
+            UserRepository().get_user(interaction.user.id).increase_node(self.node)
         else:
             m.color = 0xeb3434
             self.style = ButtonStyle.red
