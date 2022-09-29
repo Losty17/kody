@@ -3,14 +3,15 @@ from sqlalchemy import BigInteger, Column, DateTime, Enum, Integer, String
 from sqlalchemy.sql import func
 
 from .. import Base
-from .enums import NodeEnum, VipEnum
+from ..enums import NodeEnum, VipEnum
+from ..structs import BitDict
 
 class User(Base):
     __tablename__ = 'users'
 
     # Basic data
     id: int = Column(BigInteger, primary_key=True)
-    __bits: str = Column('bits', String(64), server_default='0;0;0;0;0;0;0;0')
+    _bits: str = Column('bits', String(64), server_default='0;0;0;0;0;0;0;0')
     vip: VipEnum = Column(Enum(VipEnum), server_default=VipEnum.none.name)
 
     # Cooldowns
@@ -31,23 +32,22 @@ class User(Base):
     created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
     updated_at: datetime = Column(DateTime(timezone=True), onupdate=func.now())
 
+    def __init__(self):
+        self.__bit_dict = BitDict(self)
+
     def __repr__(self) -> str:
         return f"<User id={self.id}>"
 
     @property
     def bits(self):
-        bits = self.__bits.split(";")
-        if len(bits) == len(NodeEnum):
-            return {node.name: int(bits[i]) for i, node in enumerate(NodeEnum)}
-        else:
-            raise Exception("Bit array size doesn't match default node size")
+        return self.__bit_dict
 
     def increase_node(self, node: NodeEnum, amount: int = 1):
         # TODO: create a class for the dict with custom get and set for nodes
         bits = self.bits
         bits[node.name] += amount
 
-        self.__bits = ";".join(str(i) for i in bits.values())
+        self._bits = ";".join(str(i) for i in bits.values())
         self.quests_right += amount
 
         return self

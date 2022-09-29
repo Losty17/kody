@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy import Column, Enum, Integer, String
 
 from .. import Base
-from .enums import NodeEnum
+from ..enums import NodeEnum
 
 
 class Question(Base):
