@@ -23,8 +23,10 @@ class User(Base):
     last_question: datetime = Column(DateTime(timezone=True))
 
     # Profile
-    bio: str = Column(String(200), server_default='Isso aqui está tão vazio...')
+    bio: str = Column(
+        String(180), server_default='Isso aqui está tão vazio...')
     color: str = Column(String(9), server_default='#ffffff')
+    cape: str = Column(String(600))
     badges: str = Column(String(255), server_default='')
 
     # Statistics
@@ -33,13 +35,14 @@ class User(Base):
     quests_right: int = Column(Integer, server_default='0')
 
     # Default fields
-    created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
+    created_at: datetime = Column(
+        DateTime(timezone=True), server_default=func.now())
     updated_at: datetime = Column(DateTime(timezone=True), onupdate=func.now())
 
     # Declaring before so we can initialize when the User object
     # is fully loaded, avoiding issues with None pointers.
     __bit_dict = None
-        
+
     def __repr__(self) -> str:
         return f"User(id={self.id})"
 
@@ -50,11 +53,11 @@ class User(Base):
 
     class BitDict(dict):
         dict: Dict[str, int] = {}
-        
+
         def __init__(self, user: User):
             self.user = user
             data = user._bits.split(';')
-            
+
             for i, node in enumerate(NodeEnum):
                 self[node.name] = int(data[i])
 
@@ -65,7 +68,7 @@ class User(Base):
 
         def __getitem__(self, key: str):
             return self.dict[key]
-            
+
         def __str__(self):
             return str(self.dict)
 

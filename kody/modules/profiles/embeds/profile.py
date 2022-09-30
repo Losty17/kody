@@ -40,8 +40,8 @@ class ProfileEmbed(Embed):
             inline=False
         )
 
-        self.set_image(
-            url="https://i.pinimg.com/originals/44/da/a6/44daa6dd16148062fab11d15b5a0f67d.jpg")
+        if (user.cape):
+            self.set_image(url=user.cape)
 
         self.set_footer(text="Criado")
         self.timestamp = user.created_at.replace(
