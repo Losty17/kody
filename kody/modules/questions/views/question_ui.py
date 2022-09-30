@@ -49,7 +49,8 @@ class QuestionButton(Button):
             m.color = 0x34eb34
             self.style = ButtonStyle.green
             msg = "correta!"
-            UserRepository().get_user(interaction.user.id).increase_node(self.node)
+            user = UserRepository().get(interaction.user.id)
+            user.bits[self.node] = user.bits[self.node] + 1
         else:
             m.color = 0xeb3434
             self.style = ButtonStyle.red

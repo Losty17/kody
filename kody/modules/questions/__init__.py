@@ -6,7 +6,7 @@ from discord.app_commands import CommandOnCooldown, command
 from ...db import Database
 from .. import BaseCog
 from ..staff import KodyBot
-from ..staff.checks import check_cooldown, ensure_user_created
+from ..staff.checks import check_cooldown
 from .embeds import QuestionEmbed
 from .views import QuestionUi
 
@@ -17,7 +17,6 @@ class Questions(BaseCog):
 
     @command(name="quest")
     @check_cooldown()
-    @ensure_user_created()
     async def _question_command(self, interaction: Interaction):
         """ Responda uma perguntinha! """
 

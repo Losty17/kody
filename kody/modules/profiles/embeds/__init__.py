@@ -9,7 +9,8 @@ from ....db.repositories import UserRepository
 class ProfileEmbed(Embed):
     def __init__(self, member: Member):
         super().__init__()
-        user = UserRepository().get(member.id)
+        user_repo = UserRepository()
+        user = user_repo.get(member.id)
 
         self.color = Colour.from_str(user.color)
 

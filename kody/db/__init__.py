@@ -4,9 +4,6 @@ from typing import List
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-from . import Base
-from .models import *
-
 db_uri = getenv("DATABASE_URI") if getenv(
             "ENVIRONMENT").lower() == "production" else "sqlite:///:memory:"
 
@@ -15,6 +12,8 @@ engine = create_engine(db_uri)
 Base = declarative_base()
 
 Base.metadata.bind = engine
+
+from .models import *
 
 class Database():
     def __init__(self) -> None:

@@ -2,10 +2,9 @@ from discord import Interaction
 from discord.app_commands import Choice, Group, choices, describe
 from discord.ext import commands
 
-from ...db.repositories import UserRepository
-
 from ... import kody
 from ...db import NodeEnum
+from ...db.repositories import UserRepository
 from ...kody import KodyBot
 from ...utils import is_owner
 from .. import BaseCog
@@ -100,10 +99,12 @@ class Dev(BaseCog):
         """ Give bits to a user """
         user_repo = UserRepository()
 
-        user = user_repo.get(interaction.user.id).increase_node(NodeEnum[node], amount)
+        user = user_repo.get(interaction.user.id)
+        user.bits[node] += amount
+        user.quests_right += amount
         user_repo.update(user)
 
-        await interaction.response.send_message(user.quests_right)
+        await interaction.response.send_message(user.bits)
 
 
 async def setup(bot: commands.Bot) -> None:

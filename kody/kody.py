@@ -5,8 +5,12 @@ from typing import List
 
 from discord import Activity, ActivityType, Intents, Object, Status
 from discord.ext import commands
+from discord.ext.commands import Context
 
+from .db.models import User
+from .db.repositories import UserRepository
 from .logger import setup_logger
+from .tree import CommandTree
 
 
 class KodyBot(commands.Bot):
@@ -18,7 +22,13 @@ class KodyBot(commands.Bot):
         super().__init__(
             command_prefix,
             intents=intents,
-            application_id=application_id
+            application_id=application_id,
+            status=Status.idle,
+            activity=Activity(
+                name="cantigas de ninar",
+                type=ActivityType.listening
+            ),
+            tree_cls=CommandTree
         )
         self.owner_id = owner_id
 
@@ -97,14 +107,24 @@ class KodyBot(commands.Bot):
         self.logger.warn('Syncing global tree')
         await self.tree.sync(guild=None)
 
+    async def cog_check(self, ctx: Context):
+        def predicate(ctx: Context) -> bool:
+            user_repo = UserRepository()
+            user = user_repo.get(ctx.author.id)
+            
+            if not user:
+                user_repo.add(User(id=ctx.author.id))
+
+            return True
+        return commands.check(predicate)
+
     @commands.Cog.listener()
     async def on_ready(self):
-        await self.change_presence(
-            status=Status.idle,
-            activity=Activity(
-                name="cantigas de ninar",
-                type=ActivityType.listening
-            )
-        )
-
         self.logger.info(f'Logged in as {self.user} (ID: {self.user.id})')
+
+    async def ensure_user_created(ctx: Context):
+        user_repo = UserRepository()
+        user = user_repo.get(ctx.author.id)
+        
+        if not user:
+            user_repo.add(User(id=ctx.author.id))
