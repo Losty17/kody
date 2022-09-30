@@ -5,6 +5,8 @@ from discord.ui import Select, View, Modal, TextInput
 from kody.db.repositories.user_repo import UserRepository
 from kody.modules.profiles.embeds import BitInventoryEmbed, ProfileEmbed
 
+from re import compile
+
 OPTIONS = {
     "profile": {
         "key": "profile",
@@ -30,12 +32,6 @@ OPTIONS = {
         "emoji": "📑",
         "description": "Suas estatísticas pessoais"
     },
-    "edit": {
-        "key": "edit",
-        "label": "Editar",
-        "emoji": "✏️",
-        "description": "Edite seu perfil público"
-    },
 }
 
 
@@ -47,10 +43,15 @@ class ProfileView(View):
 
     class Menu(Select):
         def __init__(self, target: Member, *, active: str, old_view: ProfileView):
-            options = OPTIONS
-
-            if (active != "profile" and "edit" in options):
-                del options["edit"]
+            if (active == "profile"):
+                OPTIONS["edit"] = {
+                    "key": "edit",
+                    "label": "Editar",
+                    "emoji": "✏️",
+                    "description": "Edite seu perfil público"
+                }
+            elif "edit" in OPTIONS:
+                del OPTIONS["edit"]
 
             super().__init__(
                 placeholder="Selecione uma opção...",
@@ -61,7 +62,7 @@ class ProfileView(View):
                         emoji=opt["emoji"],
                         value=opt["key"],
                         default=opt["key"] == active
-                    ) for opt in options.values()
+                    ) for opt in OPTIONS.values()
                 ]
             )
 
@@ -129,9 +130,11 @@ class ProfileView(View):
             user = user_repo.get(interaction.user.id)
 
             user.bio = self.bio.value if len(self.bio.value) > 0 else user.bio
-            user.color = self.color.value if self.color.value.startswith("#") else user.color
-            user.cape = self.cape.value if len(self.cape.value) > 0 else user.cape
-            
+            user.color = self.color.value if self.color.value.startswith(
+                "#") else user.color
+            if compile("^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$").search(self.cape.value) is not None:
+                user.cape = self.cape.value
+
             user_repo.update(user)
 
             await interaction.response.edit_message(embed=ProfileEmbed(interaction.user), view=ProfileView(interaction.user, active="profile", old_view=self.view))
