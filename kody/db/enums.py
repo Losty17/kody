@@ -10,12 +10,12 @@ class VipEnum(Enum):
 
 
 class NodeEnum(Enum):
-    __order__: str = 'web data design coding network robotics hardware software'
-    web: str = 0
-    data: str = 1
-    design: str = 2
-    coding: str = 3
-    network: str = 4
-    robotics: str = 5
-    hardware: str = 6
-    software: str = 7
+    __order__: str = 'data hard soft net web code shield social'
+    data: str = 0
+    hard: str = 1
+    soft: str = 2
+    net: str = 3
+    web: str = 4
+    code: str = 5
+    shield: str = 6
+    social: str = 7

@@ -19,7 +19,7 @@ class Profiles(BaseCog):
         target = member or interaction.user
 
         embed = ProfileEmbed(interaction.guild.get_member(target.id))
-        view = ProfileView()
+        view = ProfileView(interaction.guild.get_member(target.id))
 
         await interaction.response.send_message(
             interaction.user.mention,

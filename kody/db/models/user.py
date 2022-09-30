@@ -41,7 +41,7 @@ class User(Base):
     __bit_dict = None
         
     def __repr__(self) -> str:
-        return f"<User id={self.id}>"
+        return f"User(id={self.id})"
 
     @property
     def bits(self):

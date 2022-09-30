@@ -1,38 +1,54 @@
-from email.policy import default
 from enum import Enum
-from discord import Interaction, SelectOption, User
+from discord import Interaction, SelectOption, Member
 from discord.ui import Select, View
+
+from kody.modules.profiles.embeds import ProfileEmbed, BitInventoryEmbed
 
 
 class Options(Enum):
     profile = 'profile'
+    bits = 'bits'
     edit = 'edit'
 
 
 class ProfileView(View):
-    def __init__(self):
+    def __init__(self, target: Member):
         super().__init__(timeout=180)
-        self.add_item(self.Menu())
+        self.add_item(self.Menu(target))
 
     class Menu(Select):
-        def __init__(self):
+        def __init__(self, target: Member):
             super().__init__(options=[
                 SelectOption(label="Perfil", emoji="👤",
                              description="Seu perfil público",
-                             default=True,
                              value=Options.profile.value),
                 SelectOption(label="Editar", emoji="✏️",
                              description="Editar seu perfil",
-                             value=Options.edit.value)
-            ])
+                             value=Options.edit.value),
+                SelectOption(label="Bits", emoji="👜",
+                             description="Inventário de Bits",
+                             value=Options.bits.value)
+            ],
+            placeholder="Selecione uma opção...")
+
+            # self.values[0] = Options.profile.value
+
+            self.target = target
 
         async def callback(self, interaction: Interaction):
-            msg = interaction.message
-            option = self.values[0]
+            embed = None
 
-            match option:
+            match self.values[0]:
+                case Options.profile.value:
+                    embed = ProfileEmbed(self.target)
+
+                case Options.bits.value:
+                    embed = BitInventoryEmbed(self.target)
+
                 case Options.edit.value:
-                    await msg.delete()
+                    return
 
                 case _:
-                    await interaction.response.send_message("teste")
+                    return
+            
+            await interaction.response.edit_message(embed=embed)
