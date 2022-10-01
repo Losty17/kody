@@ -5,10 +5,9 @@ from typing import List
 
 from discord import Activity, ActivityType, Intents, Object, Status
 from discord.ext import commands
-from discord.ext.commands import Context
 
-from .db.models import User
-from .db.repositories import UserRepository
+from kody.translator import Translator
+
 from .logger import setup_logger
 from .tree import CommandTree
 
@@ -43,6 +42,7 @@ class KodyBot(commands.Bot):
         await self.load_modules(self.modules)
         # await self._clear_global_commands()
         # await self._global_sync()
+        await self.tree.set_translator(Translator())
         await self.sync()
 
     async def load_modules(self, extensions: List[str]) -> None:
@@ -72,7 +72,7 @@ class KodyBot(commands.Bot):
             file_list.remove("__pycache__")
         except ValueError:
             pass
-        
+
         return [f'.{directory}.{file}' for file in file_list if not "." in file]
 
     async def sync(self) -> None:
@@ -107,24 +107,6 @@ class KodyBot(commands.Bot):
         self.logger.warn('Syncing global tree')
         await self.tree.sync(guild=None)
 
-    async def cog_check(self, ctx: Context):
-        def predicate(ctx: Context) -> bool:
-            user_repo = UserRepository()
-            user = user_repo.get(ctx.author.id)
-            
-            if not user:
-                user_repo.add(User(id=ctx.author.id))
-
-            return True
-        return commands.check(predicate)
-
     @commands.Cog.listener()
     async def on_ready(self):
         self.logger.info(f'Logged in as {self.user} (ID: {self.user.id})')
-
-    async def ensure_user_created(ctx: Context):
-        user_repo = UserRepository()
-        user = user_repo.get(ctx.author.id)
-        
-        if not user:
-            user_repo.add(User(id=ctx.author.id))

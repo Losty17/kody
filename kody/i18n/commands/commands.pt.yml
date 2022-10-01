@@ -1,0 +1,11 @@
+pt:
+  profile: perfil
+  profiledesc: Veja seu perfil público
+
+  dashboard: painel
+  dashboarddesc: Acesso rápido para suas necessidades. Veja seu perfil, loja, coleção e muito mais!
+  
+  language: idioma
+  
+  quest: questao
+  questdesc: Responda uma pergunta!

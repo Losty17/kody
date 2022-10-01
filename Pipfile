@@ -16,6 +16,7 @@ aiosqlite = "*"
 psycopg2-binary = "*"
 jurigged = "*"
 stringprogressbar = "*"
+python-i18n = {extras = ["yaml"], version = "*"}
 
 [dev-packages]
 

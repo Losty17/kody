@@ -1,0 +1,27 @@
+pt:
+  morning: Bom dia
+  afternoon: Boa tarde
+  evening: Boa noite
+
+  next_cooldown_hours:
+    zero: Disponível!
+    one: Disponível em uma hora.
+    many: Disponível em `%{count}` horas.    
+
+  next_cooldown_minutes:
+    zero: Disponível!
+    one: Disponível em um minuto.
+    many: Disponível em `%{count}` minutos.
+
+  next_quest: Próxima questão
+  next_vote: Próximo voto
+  next_daily: Próxima diária
+
+  profile: Perfil
+  inventory: Inventário
+  badges: Emblemas
+  shop: Loja
+  quest: Questão
+  vote: Votar
+  daily: Diária
+  help: Ajuda 

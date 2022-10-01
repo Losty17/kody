@@ -1,0 +1,27 @@
+en:
+  morning: Good morning
+  afternoon: Good afternoon
+  evening: Good evening
+
+  next_cooldown_hours:
+    zero: Available!
+    one: Available within an hour.
+    many: Available within `%{count}` hours.    
+
+  next_cooldown_minutes:
+    zero: Available!
+    one: Available within a minute.
+    many: Available within `%{count}` minutes.    
+
+  next_quest: Next quest
+  next_vote: Next vote
+  next_daily: Next daily
+
+  profile: Profile
+  inventory: Inventory
+  badges: Badges
+  shop: Shop
+  quest: Quest
+  vote: Vote
+  daily: Daily
+  help: Help
