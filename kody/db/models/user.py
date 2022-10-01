@@ -20,14 +20,16 @@ class User(Base):
 
     # Cooldowns
     last_vote: datetime = Column(DateTime(timezone=True))
+    last_daily: datetime = Column(DateTime(timezone=True))
     last_question: datetime = Column(DateTime(timezone=True))
 
     # Profile
     bio: str = Column(
         String(180), server_default='Isso aqui está tão vazio...')
     color: str = Column(String(9), server_default='#ffffff')
-    cape: str = Column(String(600))
-    badges: str = Column(String(255), server_default='')
+    cape: str = Column(
+        String(600), server_default='https://i.imgur.com/VMYHFlM.png')
+    __badges: str = Column('badges', String(255), server_default='')
 
     # Statistics
     quests_seen: int = Column(Integer, server_default='0')
@@ -39,6 +41,8 @@ class User(Base):
         DateTime(timezone=True), server_default=func.now())
     updated_at: datetime = Column(DateTime(timezone=True), onupdate=func.now())
 
+    locale: str = Column(String(5), server_default='pt')
+
     # Declaring before so we can initialize when the User object
     # is fully loaded, avoiding issues with None pointers.
     __bit_dict = None
@@ -47,9 +51,43 @@ class User(Base):
         return f"User(id={self.id})"
 
     @property
+    def badges(self):
+        return [int(badge) for badge in self.__badges.split(";")]
+
+    @property
     def bits(self):
         self.__bit_dict = self.__bit_dict or self.BitDict(self)
         return self.__bit_dict
+
+    @property
+    def quest_cooldown(self):
+        if not self.last_question:
+            return 0
+        else:
+            time_diff = (datetime.now() - self.last_question).total_seconds()
+            cd = 60 * 30
+
+            return cd - time_diff
+
+    @property
+    def vote_cooldown(self):
+        if not self.last_vote:
+            return 0
+        else:
+            time_diff = (datetime.now() - self.last_vote).total_seconds()
+            cd = 60 * 60 * 12
+
+            return cd - time_diff
+
+    @property
+    def daily_cooldown(self):
+        if not self.last_daily:
+            return 0
+        else:
+            time_diff = (datetime.now() - self.last_daily).total_seconds()
+            cd = 60 * 60 * 24
+
+            return cd - time_diff
 
     class BitDict(dict):
         dict: Dict[str, int] = {}

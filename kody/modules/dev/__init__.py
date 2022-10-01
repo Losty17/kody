@@ -95,7 +95,7 @@ class Dev(BaseCog):
     @choices(
         node=[Choice(name=node.name, value=node.name) for node in NodeEnum]
     )
-    async def give_bits(self, interaction: Interaction, node: str, amount: int = 1):
+    async def give(self, interaction: Interaction, node: str, amount: int = 1):
         """ Give bits to a user """
         user_repo = UserRepository()
 

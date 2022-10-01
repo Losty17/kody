@@ -1,9 +1,10 @@
 from datetime import datetime
 
+import i18n
 from discord import Interaction
-from discord.app_commands import CommandOnCooldown, command
+from discord.app_commands import CommandOnCooldown, command, locale_str
+from kody.db.repositories import QuestionRepository, UserRepository
 
-from ...db import Database
 from .. import BaseCog
 from ..staff import KodyBot
 from ..staff.checks import check_cooldown
@@ -15,18 +16,20 @@ class Questions(BaseCog):
     def __init__(self, bot: KodyBot) -> None:
         super().__init__(bot)
 
-    @command(name="quest")
+    @command(name=locale_str("commands_quest"))
     @check_cooldown()
     async def _question_command(self, interaction: Interaction):
-        """ Responda uma perguntinha! """
+        """ questions_dropdesc """
 
         # Set the cooldown for the user
         await interaction.response.defer(ephemeral=True, thinking=True)
 
-        user = self.user_repo.get_user(interaction.user.id)
+        user_repo = UserRepository()
+        user = user_repo.get(interaction.user.id)
+
         user.last_question = datetime.utcnow()
 
-        question = Database().get_random_question()
+        question = QuestionRepository().random()
 
         if question:
             question_embed = QuestionEmbed(question)
@@ -37,15 +40,14 @@ class Questions(BaseCog):
                 view=QuestionUi(question, author=interaction.user)
             )
         else:
-            await interaction.followup.send("Ocorreu um erro ao procurar uma questão.", ephemeral=True)
+            await interaction.followup.send(i18n.t("questions.notfound"), ephemeral=True)
 
     @_question_command.error
     async def _on_question_error(self, interaction: Interaction, error):
         if isinstance(error, CommandOnCooldown):
             cd = error.retry_after / 60 / 60
 
-            msg = 'Uma pergunta já foi respondida recentemente. ' + \
-                f'Você poderá responder outra pergunta em: {round(cd)}h'
+            msg = i18n.t("questions.cooldown", count=round(cd))
 
             return await interaction.response.send_message(msg, ephemeral=True)
 
