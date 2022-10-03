@@ -33,7 +33,7 @@ class UserRepository(BaseRepo[User]):
 
         return success
 
-    def update(self, target: User) -> User:
+    def save(self, target: User) -> User:
         with self.session.begin():
             self.session.merge(target)
 

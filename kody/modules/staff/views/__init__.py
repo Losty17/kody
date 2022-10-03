@@ -48,7 +48,7 @@ class NodeModal(Modal):
             title=f"Adicionando questão sobre {node}", timeout=None)
 
     async def on_submit(self, interaction: Interaction):
-        quest = QuestionRepository().add_question(Question(
+        quest = QuestionRepository().add(Question(
             node=self.node,
             text=self.quest.value,
             right_ans=self.right_ans.value,

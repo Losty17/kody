@@ -1,55 +1,54 @@
-from datetime import datetime
-
-import i18n
 from discord import Interaction
 from discord.app_commands import CommandOnCooldown, command, locale_str
+from i18n import t
+from kody import KodyBot
 from kody.db.repositories import QuestionRepository, UserRepository
-
-from .. import BaseCog
-from ..staff import KodyBot
-from ..staff.checks import check_cooldown
-from .embeds import QuestionEmbed
-from .views import QuestionUi
+from kody.modules import BaseCog
+from kody.modules.dashboard.quests import QuestEmbed, QuestView
 
 
 class Questions(BaseCog):
     def __init__(self, bot: KodyBot) -> None:
         super().__init__(bot)
 
-    @command(name=locale_str("commands_quest"))
-    @check_cooldown()
-    async def _question_command(self, interaction: Interaction):
-        """ questions_dropdesc """
+    @command(
+        name=locale_str("quest", namespace="commands"),
+        description=locale_str("questdesc", namespace="commands")
+    )
+    async def _question_command(self, i: Interaction):
 
         # Set the cooldown for the user
-        await interaction.response.defer(ephemeral=True, thinking=True)
+        await i.response.defer()
 
         user_repo = UserRepository()
-        user = user_repo.get(interaction.user.id)
+        user = user_repo.get(i.user.id)
 
-        user.last_question = datetime.utcnow()
+        if user.quest_cooldown <= 0:
+            quest_repo = QuestionRepository()
+            quest = quest_repo.random()
 
-        question = QuestionRepository().random()
+            user.quest_pool -= 1
+            UserRepository().save(user)
 
-        if question:
-            question_embed = QuestionEmbed(question)
+            view = QuestView(user, quest)
+            view.remove_item(view.new_quest_button)
+            view.remove_item(view.go_back_button)
 
-            await interaction.followup.send(
-                f"{interaction.user.mention}",
-                embed=question_embed,
-                view=QuestionUi(question, author=interaction.user)
+            return await i.followup.send(
+                embed=QuestEmbed(i.user, user, quest),
+                view=view
             )
         else:
-            await interaction.followup.send(i18n.t("questions.notfound"), ephemeral=True)
+            raise CommandOnCooldown(60 * 60 * 4, user.quest_cooldown)
 
     @_question_command.error
-    async def _on_question_error(self, interaction: Interaction, error):
+    async def _on_question_error(self, i: Interaction, error):
         if isinstance(error, CommandOnCooldown):
-            cd = error.retry_after / 60 / 60
+            cd = error.retry_after
 
-            msg = i18n.t("questions.cooldown", count=round(cd))
+            msg = t("questions.cooldown", count=round(cd / 60 / 60))
 
-            return await interaction.response.send_message(msg, ephemeral=True)
+            return await i.followup.send(msg)
 
 
 async def setup(bot: KodyBot) -> None:

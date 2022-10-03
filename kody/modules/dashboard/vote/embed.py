@@ -1,17 +1,15 @@
 
 from datetime import datetime
 
-from discord import Color, Embed
+from discord import Member
 from i18n import t
+from kody.components import Embed
 from kody.db.models.user import User
 
 
 class VoteEmbed(Embed):
-    def __init__(self, user: User):
-        super().__init__(
-            color=Color.from_str(user.color),
-            title=t("votes.title"),
-            description=t("votes.description"),
-            timestamp=datetime.now()
-        )
-        self.set_image(url=user.cape)
+    def __init__(self, member: Member, user: User):
+        super().__init__(member, user)
+
+        self.title = t("votes.title")
+        self.description = t("votes.description")

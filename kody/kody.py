@@ -78,12 +78,12 @@ class KodyBot(commands.Bot):
     async def sync(self) -> None:
         """ Sync the commands to the specified guilds """
         self.logger.debug('Syncing commands')
-        before = datetime.utcnow()
+        before = datetime.now()
         for g in self.dev_guilds:
             self.tree.copy_global_to(guild=g)
             await self.tree.sync(guild=g)
 
-        elapsed = (datetime.utcnow() - before).total_seconds()
+        elapsed = (datetime.now() - before).total_seconds()
 
         self.logger.debug(
             f"Done! ({f'{round(elapsed, 2)}s' if elapsed > 1 else f'{round(elapsed* 1000)}ms'} elapsed)")

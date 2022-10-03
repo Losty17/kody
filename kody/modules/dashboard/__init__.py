@@ -23,7 +23,7 @@ class Dashboard(BaseCog):
         user = user_repo.get(interaction.user.id)
 
         user.locale = language
-        user_repo.update(user)
+        user_repo.save(user)
 
         i18n.set("locale", language)
 
@@ -35,17 +35,14 @@ class Dashboard(BaseCog):
         name=locale_str("dashboard", namespace="commands"),
         description=locale_str("dashboarddesc", namespace="commands")
     )
-    async def dashboard(self, interaction: Interaction):
+    async def dashboard(self, i: Interaction):
         user_repo = UserRepository()
-        user = user_repo.get(interaction.user.id)
+        user = user_repo.get(i.user.id)
 
-        embed = DashboardEmbed(interaction, user)
+        embed = DashboardEmbed(i.user, user)
         view = DashboardView(user)
 
-        await interaction.response.send_message(
-            embed=embed,
-            view=view,
-        )
+        await i.response.send_message(embed=embed, view=view)
 
 
 async def setup(bot: KodyBot) -> None:

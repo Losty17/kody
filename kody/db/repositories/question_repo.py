@@ -55,7 +55,7 @@ class QuestionRepository(BaseRepo[Question]):
 
         return success
 
-    def update(self, target: Question) -> Question:
+    def save(self, target: Question) -> Question:
         with self.session.begin():
             self.session.merge(target)
 

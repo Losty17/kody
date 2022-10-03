@@ -3,3 +3,7 @@ pt:
   cooldown: 
     one: Uma pergunta já foi respondida recentemente. Você poderá responder outra pergunta em uma hora
     many: Uma pergunta já foi respondida recentemente. Você poderá responder outra pergunta em %{count} horas
+
+  new_quest: 
+    zero: Nova questão
+    many: Nova questão (%{count} restantes)

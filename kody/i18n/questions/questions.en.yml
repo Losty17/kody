@@ -3,3 +3,7 @@ en:
   cooldown: 
     one: Your questions were already answered. You may answer more within an hour.
     many: Your questions were already answered. You may answer more within %{count} hours.
+
+  new_quest: 
+    zero: New question
+    one: New question (%{count} remaining)

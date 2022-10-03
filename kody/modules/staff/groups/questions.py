@@ -62,7 +62,7 @@ class KodyQuestions(Group):
             except:
                 continue
 
-        QuestionRepository().bulk_add_question(questions)  # Adicionando ao banco
+        QuestionRepository().add_all(questions)  # Adicionando ao banco
 
         await interaction.followup.send(f"Foram adicionadas `{len(questions)}` questões!", ephemeral=True)
 

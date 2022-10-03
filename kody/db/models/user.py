@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Dict
 
-from sqlalchemy import BigInteger, Column, DateTime, Enum, Integer, String
+from kody.db import Base
+from kody.db.models.item import Item
+from kody.types import Bits, Dict, Preferences, Stats
+from sqlalchemy import BigInteger, Boolean, Column, DateTime, Integer, String
 from sqlalchemy.sql import func
-
-from .. import Base
-from ..enums import NodeEnum, VipEnum
 
 
 class User(Base):
@@ -15,59 +14,75 @@ class User(Base):
 
     # Basic data
     id: int = Column(BigInteger, primary_key=True)
-    _bits: str = Column('bits', String(64), server_default='0;0;0;0;0;0;0;0')
-    vip: VipEnum = Column(Enum(VipEnum), server_default=VipEnum.none.name)
+    vip: bool = Column(Boolean, server_default='0')
 
     # Cooldowns
     last_vote: datetime = Column(DateTime(timezone=True))
     last_daily: datetime = Column(DateTime(timezone=True))
     last_question: datetime = Column(DateTime(timezone=True))
+    __quest_pool: int = Column('quest_pool', Integer,
+                               server_default='0')
 
     # Profile
-    bio: str = Column(
-        String(180), server_default='Isso aqui está tão vazio...')
-    color: str = Column(String(9), server_default='#ffffff')
-    cape: str = Column(
-        String(600), server_default='https://i.imgur.com/VMYHFlM.png')
-    __badges: str = Column('badges', String(255), server_default='')
-
-    # Statistics
-    quests_seen: int = Column(Integer, server_default='0')
-    quests_answered: int = Column(Integer, server_default='0')
-    quests_right: int = Column(Integer, server_default='0')
+    bio: str = Column(String(180),
+                      server_default='Isso aqui está tão vazio...')
+    color: str = Column(String(7),
+                        server_default='#ffffff')
+    cape: str = Column(String(600),
+                       server_default='https://i.imgur.com/VMYHFlM.png')
+    __badges: str = Column('badges', String(255),
+                           server_default='')
 
     # Default fields
-    created_at: datetime = Column(
-        DateTime(timezone=True), server_default=func.now())
-    updated_at: datetime = Column(DateTime(timezone=True), onupdate=func.now())
+    created_at: datetime = Column(DateTime(timezone=True),
+                                  server_default=func.now())
+    updated_at: datetime = Column(DateTime(timezone=True),
+                                  onupdate=func.now())
 
-    locale: str = Column(String(5), server_default='pt')
+    preferences_col: str = Column('preferences', String(255),
+                                  server_default='0')
+    bits_col: str = Column('bits', String(64),
+                           server_default='0;0;0;0;0;0;0;0')
+    stats_col: str = Column('stats', String(255),
+                            server_default='0;0;0;0;0;0;0;0;0')
 
-    # Declaring before so we can initialize when the User object
+    # Declaring before so we c/an initialize when the User object
     # is fully loaded, avoiding issues with None pointers.
-    __bit_dict = None
+    __bits: Bits = None
+    __stats: Stats = None
+    __preferences: Preferences = None
 
     def __repr__(self) -> str:
         return f"User(id={self.id})"
+
+    @property
+    def stats(self) -> Stats:
+        self.__stats = self.__stats or Dict[Stats](self, 'stats_col', Stats)
+        return self.__stats
+
+    @property
+    def preferences(self) -> Preferences:
+        self.__preferences = \
+            self.__preferences or \
+            Dict[Preferences](
+                self,
+                'preferences_col',
+                Preferences,
+                separator=None,
+                boolean=True
+            )
+
+        return self.__preferences
 
     @property
     def badges(self):
         return [int(badge) for badge in self.__badges.split(";")]
 
     @property
-    def bits(self):
-        self.__bit_dict = self.__bit_dict or self.BitDict(self)
-        return self.__bit_dict
-
-    @property
-    def quest_cooldown(self):
-        if not self.last_question:
-            return 0
-        else:
-            time_diff = (datetime.now() - self.last_question).total_seconds()
-            cd = 60 * 30
-
-            return cd - time_diff
+    def bits(self) -> Bits:
+        self.__bits = self.__bits or Dict[Bits](
+            self, 'bits_col', Bits)
+        return self.__bits
 
     @property
     def vote_cooldown(self):
@@ -89,62 +104,40 @@ class User(Base):
 
             return cd - time_diff
 
-    class BitDict(dict):
-        dict: Dict[str, int] = {}
+    @property
+    def quest_cooldown(self):
+        if not self.last_question:
+            self.quest_pool = 5
+            return 0
+        elif self.quest_pool > 0:
+            return 0
+        else:
+            time_diff = (datetime.now() - self.last_question).total_seconds()
+            cd = (60 * 60 * 4) - time_diff
 
-        def __init__(self, user: User):
-            self.user = user
-            data = user._bits.split(';')
+            if cd <= 0:
+                self.quest_pool = 5
 
-            for i, node in enumerate(NodeEnum):
-                self[node.name] = int(data[i])
+            return cd
 
-        def __setitem__(self, key: str, item: int):
-            self.dict[key] = item
+    @property
+    def quest_pool(self):
+        return self.__quest_pool
 
-            self.user._bits = ';'.join(str(i) for i in self.dict.values())
+    @quest_pool.setter
+    def quest_pool(self, value):
+        if value == 4:
+            self.last_question = datetime.now()
 
-        def __getitem__(self, key: str):
-            return self.dict[key]
+        self.__quest_pool = value
 
-        def __str__(self):
-            return str(self.dict)
+    def add_item(self, _type: int, amount: int = 1):
+        from kody.db.repositories.item_repo import ItemRepository
 
-        def __repr__(self):
-            return repr(self.dict)
-
-        def __len__(self):
-            return len(self.dict)
-
-        def __delitem__(self, key: str):
-            return
-
-        def clear(self):
-            return
-
-        def copy(self):
-            return self.dict.copy()
-
-        def has_key(self, k: str):
-            return k in self.dict
-
-        def update(self, *args, **kwargs):
-            return self.dict.update(*args, **kwargs)
-
-        def keys(self):
-            return self.dict.keys()
-
-        def values(self):
-            return self.dict.values()
-
-        def items(self):
-            return self.dict.items()
-
-        def pop(self, *args):
-            return
-
-        def __cmp__(self, dict_: Dict):
-            return self.__cmp__(self.dict, dict_)
-
-        def __contains__(self, item):
-            return item in self.dict
+        return ItemRepository().add(
+            Item(
+                user_id=self.id,
+                _type=_type,
+                amount=amount
+            )
+        )

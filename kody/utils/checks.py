@@ -17,7 +17,7 @@ def ensure_user_created():
     def predicate(interaction: Interaction) -> bool:
         user_repo = UserRepository()
         user = user_repo.get(interaction.user.id)
-        
+
         if not user:
             user_repo.add(User(id=interaction.user.id))
 
@@ -29,11 +29,11 @@ def check_cooldown():
     def predicate(interaction: Interaction) -> bool:
         user_repo = UserRepository()
         user = user_repo.get(interaction.user.id)
-        
+
         if user is None or user.last_question is None:
             return True
-        
-        diff: timedelta = datetime.utcnow() - user.last_question
+
+        diff: timedelta = datetime.now() - user.last_question
         match user.vip:
             case VipEnum.mega:
                 cd = 60 * 60 * 10

@@ -4,9 +4,10 @@ from discord.ext import commands
 
 from ... import kody
 from ...db import NodeEnum
-from ...db.repositories import UserRepository
+from ...db.models import Item
+from ...db.repositories import UserRepository, ItemRepository
 from ...kody import KodyBot
-from ...utils import is_owner
+from ...utils.checks import is_owner
 from .. import BaseCog
 
 module_list = [Choice(name=module.split(".")[2], value=module)
@@ -102,9 +103,36 @@ class Dev(BaseCog):
         user = user_repo.get(interaction.user.id)
         user.bits[node] += amount
         user.quests_right += amount
-        user_repo.update(user)
+        user_repo.save(user)
 
         await interaction.response.send_message(user.bits)
+
+    @dev.command()
+    @is_owner()
+    async def cd(self, interaction: Interaction):
+        """ Give bits to a user """
+        user_repo = UserRepository()
+
+        user = user_repo.get(interaction.user.id)
+        user.quest_pool = 0
+
+        user_repo.save(user)
+
+        await interaction.response.send_message(user.bits)
+
+    @dev.command()
+    @is_owner()
+    async def item(self, interaction: Interaction):
+        """ Give items to a user """
+        user_repo = UserRepository()
+        item_repo = ItemRepository()
+
+        user = user_repo.get(interaction.user.id)
+        user.add_item(1)
+
+        items = item_repo.all(user.id)
+
+        await interaction.response.send_message(str(items))
 
 
 async def setup(bot: commands.Bot) -> None:

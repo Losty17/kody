@@ -1,3 +1,5 @@
+from os import getenv
+
 from discord import Interaction, app_commands
 
 import i18n
@@ -13,9 +15,14 @@ class CommandTree(app_commands.CommandTree):
         user = user_repo.get(interaction.user.id)
 
         if not user:
-            user = User(id=interaction.user.id)
+            user = User(
+                id=interaction.user.id,
+                preferences_col="1" if getenv(
+                    "ENVIRONMENT") != "production" else "0",
+                vip=True
+            )
             user_repo.add(user)
 
-        i18n.set("locale", user.locale)
+        i18n.set("locale", str(interaction.locale).split("-")[0])
 
         return await super().interaction_check(interaction)

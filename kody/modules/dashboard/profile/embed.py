@@ -1,25 +1,21 @@
 from datetime import timezone
 
-from discord import Colour, Embed, Member
+from discord import Member
+from kody.components import Embed
+from kody.db.models import User
 from StringProgressBar import progressBar as pb
-
-from kody.db.repositories import UserRepository
 
 
 class ProfileEmbed(Embed):
-    def __init__(self, member: Member):
-        super().__init__()
-        user_repo = UserRepository()
-        user = user_repo.get(member.id)
-
-        self.color = Colour.from_str(user.color)
+    def __init__(self, member: Member, user: User):
+        super().__init__(member, user)
 
         self.title = member.nick or member.name
         self.description = "***Desenvolvedor de Software***\n\n" + user.bio
         self.set_thumbnail(url=member.avatar.url)
 
-        level = round(user.quests_right / 64)
-        xp = user.quests_right - (level * 64)
+        level = round(user.stats["quests_right"] / 64)
+        xp = user.stats["quests_right"] - (level * 64)
 
         bar = pb.filledBar(64, xp if xp > 2 else 2,
                            size=20, line="  ", slider="▰")
@@ -31,7 +27,10 @@ class ProfileEmbed(Embed):
 
         self.add_field(
             name="Quests",
-            value=f'```yaml\nVistas: {user.quests_seen}\nRespondidas: {user.quests_answered}\nAcertadas: {user.quests_right}\n```'
+            value=f'```yaml' +
+            f'\nVistas: {user.stats["quests_seen"]}' +
+            f'\nRespondidas: {user.stats["quests_answered"]}' +
+            f'\nAcertadas: {user.stats["quests_right"]}\n```'
         )
 
         self.add_field(
@@ -39,9 +38,6 @@ class ProfileEmbed(Embed):
             value="```\n🧑‍💻 Especialista em Software\n🛡️ Chefe de Segurança\n```",
             inline=False
         )
-
-        if (user.cape):
-            self.set_image(url=user.cape)
 
         self.set_footer(text="Criado")
         self.timestamp = user.created_at.replace(

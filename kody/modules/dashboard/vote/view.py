@@ -21,4 +21,4 @@ class VoteView(View):
     async def _go_back(self, i: Interaction, button: Button):
         from kody.modules.dashboard.home import DashboardEmbed, DashboardView
 
-        await i.response.edit_message(embed=DashboardEmbed(i, self.user), view=DashboardView(self.user))
+        await i.response.edit_message(embed=DashboardEmbed(i.user, self.user), view=DashboardView(self.user))

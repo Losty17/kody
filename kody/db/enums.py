@@ -19,3 +19,9 @@ class NodeEnum(Enum):
     code: str = 5
     shield: str = 6
     social: str = 7
+
+
+class PreferencesEnum(Enum):
+    __order__: str = 'language hide_labels'
+    language: str = 0
+    hide_labels: str = 1

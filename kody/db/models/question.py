@@ -21,10 +21,14 @@ class Question(Base):
     def __repr__(self) -> str:
         return f"<Question id={self.id} node={self.node}>"
 
-    def get_answers(self) -> List[str]:
+    @property
+    def answers(self) -> List[str]:
         """Returns the list of answers, with the 0 index being the correct answer
 
         Returns:
             List[str]: answers
         """
-        return [self.right_ans, self.first_ans, self.second_ans, self.third_ans]
+        answers = [self.right_ans, self.first_ans,
+                   self.second_ans, self.third_ans]
+
+        return list(filter(None, answers))

@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from typing import Awaitable, Callable
-
-from discord import ButtonStyle, Interaction
-from discord.ui import Button, View
+from discord import Interaction
+from discord.ui import View
 from i18n import t
+from kody.components import Button, ErrorView
 from kody.db.models.user import User
+from kody.db.repositories import QuestionRepository
+from kody.db.repositories.user_repo import UserRepository
+from kody.modules.dashboard.quests import QuestEmbed, QuestView
 from kody.modules.dashboard.vote import VoteEmbed, VoteView
-from kody.modules.profiles.embeds import ProfileEmbed
 
 
 class DashboardView(View):
@@ -16,44 +17,16 @@ class DashboardView(View):
         self.user = user
 
         for button in self.DashboardButtons.buttons():
-            self.add_item(self.DashboardButton(
+            self.add_item(Button(
                 button["emoji"],
                 t(button["label"]),
                 user,
                 button["key"],
                 button["action"],
-                button["row"],
+                row=button["row"],
             ))
 
-    class DashboardButton(Button):
-        def __init__(
-            self,
-            emoji: str,
-            label: str,
-            user: User,
-            key: str,
-            callback: Callable[[Interaction, User], Awaitable[None]],
-            row: int = 0
-        ):
-            super().__init__(
-                style=ButtonStyle.gray,
-                emoji=emoji,
-                label=label,
-                row=row,
-                custom_id=key
-            )
-
-            self.action = callback
-            self.user = user
-
-        async def callback(self, interaction: Interaction):
-            if (interaction.user.id != self.user.id):
-                return
-
-            return await self.action(interaction, self.user)
-
     class DashboardButtons:
-
         @classmethod
         def buttons(self):
             return [
@@ -79,13 +52,6 @@ class DashboardView(View):
                     "row": 0
                 },
                 {
-                    "key": "shop",
-                    "emoji": "💰",
-                    "label": "dashboard.shop",
-                    "action": self.__handle_shop,
-                    "row": 0
-                },
-                {
                     "key": "quest",
                     "emoji": "📚",
                     "label": "dashboard.quest",
@@ -107,43 +73,88 @@ class DashboardView(View):
                     "row": 1
                 },
                 {
+                    "key": "shop",
+                    "emoji": "💰",
+                    "label": "dashboard.shop",
+                    "action": self.__handle_shop,
+                    "row": 2
+                },
+                {
+                    "key": "premium",
+                    "emoji": "💎",
+                    "label": "dashboard.help",
+                    "action": self.__handle_help,
+                    "row": 2
+                },
+                {
                     "key": "help",
                     "emoji": "❓",
                     "label": "dashboard.help",
                     "action": self.__handle_help,
-                    "row": 1
+                    "row": 2
                 },
             ]
 
         @classmethod
-        async def __handle_profile(self, i: Interaction, user: User):
-            pass
-            # await i.response.edit_message(embed=ProfileEmbed(i.user), view=ProfileView())
+        async def __handle_profile(self, i: Interaction, user: User, button: Button):
+            from kody.modules.dashboard.profile import (ProfileEmbed,
+                                                        ProfileView)
+
+            await i.response.edit_message(embed=ProfileEmbed(i.user, user), view=ProfileView(user))
 
         @classmethod
-        async def __handle_inventory(self, i: Interaction, user: User):
-            pass
+        async def __handle_inventory(self, i: Interaction, user: User, button: Button):
+            from kody.modules.dashboard.inventory import (InventoryEmbed,
+                                                          InventoryView)
+
+            await i.response.edit_message(embed=InventoryEmbed(i.user, user), view=InventoryView(user))
 
         @classmethod
-        async def __handle_badges(self, i: Interaction, user: User):
-            pass
-
-        @classmethod
-        async def __handle_shop(self, i: Interaction, user: User):
-            pass
-
-        @classmethod
-        async def __handle_quest(self, i: Interaction, user: User):
+        async def __handle_badges(self, i: Interaction, user: User, button: Button):
             pass
 
         @classmethod
-        async def __handle_vote(self, i: Interaction, user: User):
-            await i.response.edit_message(embed=VoteEmbed(user), view=VoteView(user))
-
-        @classmethod
-        async def __handle_daily(self, i: Interaction, user: User):
+        async def __handle_shop(self, i: Interaction, user: User, button: Button):
             pass
 
         @classmethod
-        async def __handle_help(self, i: Interaction, user: User):
+        async def __handle_quest(self, i: Interaction, user: User, button: Button):
+            cd = user.quest_cooldown
+            quest_repo = QuestionRepository()
+
+            if cd <= 0:
+                question = quest_repo.random()
+
+                if question:
+                    user.quest_pool -= 1
+                    UserRepository().save(user)
+
+                    await i.response.edit_message(
+                        embed=QuestEmbed(i.user, user, question),
+                        view=QuestView(user, question)
+                    )
+
+                else:
+                    await i.response.edit_message(
+                        content=t("questions.notfound"),
+                        embed=None,
+                        view=ErrorView(user)
+                    )
+            else:
+                await i.response.edit_message(
+                    content=t("questions.cooldown", count=round(cd / 60 / 60)),
+                    embed=None,
+                    view=ErrorView(user)
+                )
+
+        @classmethod
+        async def __handle_vote(self, i: Interaction, user: User, button: Button):
+            await i.response.edit_message(embed=VoteEmbed(i.user, user), view=VoteView(user))
+
+        @classmethod
+        async def __handle_daily(self, i: Interaction, user: User, button: Button):
+            pass
+
+        @classmethod
+        async def __handle_help(self, i: Interaction, user: User, button: Button):
             pass

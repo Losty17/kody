@@ -5,8 +5,6 @@ from discord.app_commands import command, locale_str
 
 from .. import BaseCog
 from ..staff import KodyBot
-from .embeds import ProfileEmbed
-from .views import ProfileView
 
 
 class Profiles(BaseCog):
@@ -20,13 +18,13 @@ class Profiles(BaseCog):
     async def _show_profile(self, interaction: Interaction, member: Optional[Member] = None):
         target = member or interaction.user
 
-        embed = ProfileEmbed(interaction.guild.get_member(target.id))
-        view = ProfileView(interaction.guild.get_member(target.id))
+        # embed = ProfileEmbed(interaction.guild.get_member(target.id))
+        # view = ProfileView(interaction.guild.get_member(target.id))
 
         await interaction.response.send_message(
             interaction.user.mention,
-            embed=embed,
-            view=view,
+            # embed=embed,
+            # view=view,
             allowed_mentions=AllowedMentions.none()
         )
 
