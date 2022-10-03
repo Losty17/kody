@@ -6,4 +6,4 @@ en:
 
   new_quest: 
     zero: New question
-    one: New question (%{count} remaining)
+    many: New question (%{count} remaining)

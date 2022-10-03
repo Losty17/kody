@@ -109,16 +109,21 @@ class User(Base):
         if not self.last_question:
             self.quest_pool = 5
             return 0
-        elif self.quest_pool > 0:
+
+        time_delta = (datetime.now() - self.last_question).total_seconds()
+        # cd = 60 * 60 * 4
+        cd = 60
+
+        remaining = cd - time_delta
+
+        if remaining <= 0:
+            self.quest_pool = 5
             return 0
-        else:
-            time_diff = (datetime.now() - self.last_question).total_seconds()
-            cd = (60 * 60 * 4) - time_diff
 
-            if cd <= 0:
-                self.quest_pool = 5
+        if self.quest_pool > 0:
+            return 0    
 
-            return cd
+        return remaining
 
     @property
     def quest_pool(self):
