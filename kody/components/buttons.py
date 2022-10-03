@@ -16,10 +16,11 @@ class Button(ui.Button):
         key: str,
         callback: Callable[[Interaction, User, Button], Awaitable[None]],
         disabled: bool = False,
-        row: int = 0
+        row: int = 0,
+        style: ButtonStyle = ButtonStyle.gray
     ):
         super().__init__(
-            style=ButtonStyle.gray,
+            style=style,
             emoji=emoji,
             row=row,
             disabled=disabled,
@@ -40,13 +41,16 @@ class Button(ui.Button):
 
 
 class HomeButton(Button):
-    def __init__(self, user: User):
+    def __init__(self, user: User, *, row: int = 0, disabled: bool = False, style: ButtonStyle = ButtonStyle.gray):
         super().__init__(
             emoji="🏠",
             label=t("votes.back"),
             user=user,
             key="back",
-            callback=self.__handle_go_back
+            callback=self.__handle_go_back,
+            disabled=disabled,
+            row=row,
+            style=style
         )
 
     async def __handle_go_back(self, i: Interaction, user: User, button: Button):

@@ -7,6 +7,7 @@ from kody.db.models import Question, User
 from kody.db.repositories import QuestionRepository, UserRepository
 from kody.modules.dashboard.quests import QuestEmbed
 from kody.utils import find_child
+from kody.components import Button as KButton
 
 
 class QuestView(View):
@@ -26,47 +27,44 @@ class QuestView(View):
                 user
             ))
 
-        self.new_quest_button = find_child(self, "new")
-        self.new_quest_button.label = t(
-            "questions.new_quest", count=user.quest_pool)
+        self.add_item(KButton(
+            "🏠",
+            t("votes.back"),
+            user,
+            "back",
+            self.__handle_back,
+            row=1,
+            disabled=True
+        ))
 
-        self.go_back_button = find_child(self, "back")
-        self.go_back_button.label = t("votes.back")
+        self.add_item(KButton(
+            "📚",
+            t("questions.new_quest", count=user.quest_pool),
+            user,
+            "new",
+            self.__handle_new_quest,
+            row=1,
+            disabled=True
+        ))
 
-    @button(
-        row=1,
-        emoji="🏠",
-        disabled=True,
-        custom_id="back",
-        style=ButtonStyle.gray,
-        label=t("votes.back"),
-    )
-    async def _go_back(self, i: Interaction, button: Button):
+    async def __handle_back(self, i: Interaction, user: User, button: Button):
         from kody.modules.dashboard.home import DashboardEmbed, DashboardView
 
         return await i.response.edit_message(
-            embed=DashboardEmbed(i.user, self.user),
-            view=DashboardView(self.user)
+            embed=DashboardEmbed(i.user, user),
+            view=DashboardView(user)
         )
 
-    @button(
-        row=1,
-        emoji="📚",
-        disabled=True,
-        custom_id="new",
-        style=ButtonStyle.gray,
-        label=t("questions.quest"),
-    )
-    async def _new_quest(self, i: Interaction, button: Button):
+    async def __handle_new_quest(self, i: Interaction, user: User, button: Button):
         quest_repo = QuestionRepository()
         quest = quest_repo.random()
 
-        self.user.quest_pool -= 1
-        UserRepository().save(self.user)
+        user.quest_pool -= 1
+        UserRepository().save(user)
 
         return await i.response.edit_message(
-            embed=QuestEmbed(i.user, self.user, quest),
-            view=QuestView(self.user, quest)
+            embed=QuestEmbed(i.user, user, quest),
+            view=QuestView(user, quest)
         )
 
     class QuestionButton(Button):

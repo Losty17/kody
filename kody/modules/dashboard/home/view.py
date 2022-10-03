@@ -80,10 +80,10 @@ class DashboardView(View):
                     "row": 2
                 },
                 {
-                    "key": "premium",
-                    "emoji": "💎",
-                    "label": "dashboard.help",
-                    "action": self.__handle_help,
+                    "key": "config",
+                    "emoji": "⚙️",
+                    "label": "dashboard.config",
+                    "action": self.__handle_config,
                     "row": 2
                 },
                 {
@@ -154,6 +154,12 @@ class DashboardView(View):
         @classmethod
         async def __handle_daily(self, i: Interaction, user: User, button: Button):
             pass
+
+        @classmethod
+        async def __handle_config(self, i: Interaction, user: User, button: Button):
+            from kody.modules.dashboard.config import ConfigEmbed, ConfigView
+
+            await i.response.edit_message(embed=ConfigEmbed(i.user, user), view=ConfigView(user))
 
         @classmethod
         async def __handle_help(self, i: Interaction, user: User, button: Button):
