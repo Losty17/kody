@@ -11,5 +11,5 @@ class VoteEmbed(Embed):
     def __init__(self, member: Member, user: User):
         super().__init__(member, user)
 
-        self.title = t("votes.title")
+        self.title = f'🎟️ {t("votes.title")}'
         self.description = t("votes.description")

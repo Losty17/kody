@@ -28,97 +28,97 @@ class DashboardView(View):
 
     class DashboardButtons:
         @classmethod
-        def buttons(self):
+        def buttons(cls):
             return [
                 {
                     "key": "profile",
                     "emoji": "👤",
                     "label": "dashboard.profile",
-                    "action": self.__handle_profile,
+                    "action": cls.__handle_profile,
                     "row": 0
                 },
                 {
                     "key": "inventory",
                     "emoji": "🎒",
                     "label": "dashboard.inventory",
-                    "action": self.__handle_inventory,
+                    "action": cls.__handle_inventory,
                     "row": 0
                 },
                 {
                     "key": "badges",
                     "emoji": "🎖️",
                     "label": "dashboard.badges",
-                    "action": self.__handle_badges,
+                    "action": cls.__handle_badges,
                     "row": 0
                 },
                 {
                     "key": "quest",
                     "emoji": "📚",
                     "label": "dashboard.quest",
-                    "action": self.__handle_quest,
+                    "action": cls.__handle_quest,
                     "row": 1
                 },
                 {
                     "key": "vote",
                     "emoji": "🎟️",
                     "label": "dashboard.vote",
-                    "action": self.__handle_vote,
+                    "action": cls.__handle_vote,
                     "row": 1
                 },
                 {
                     "key": "daily",
                     "emoji": "🎴",
                     "label": "dashboard.daily",
-                    "action": self.__handle_daily,
+                    "action": cls.__handle_daily,
                     "row": 1
                 },
                 {
                     "key": "shop",
                     "emoji": "💰",
                     "label": "dashboard.shop",
-                    "action": self.__handle_shop,
+                    "action": cls.__handle_shop,
                     "row": 2
                 },
                 {
                     "key": "config",
                     "emoji": "⚙️",
                     "label": "dashboard.config",
-                    "action": self.__handle_config,
+                    "action": cls.__handle_config,
                     "row": 2
                 },
                 {
                     "key": "help",
                     "emoji": "❓",
                     "label": "dashboard.help",
-                    "action": self.__handle_help,
+                    "action": cls.__handle_help,
                     "row": 2
                 },
             ]
 
         @classmethod
-        async def __handle_profile(self, i: Interaction, user: User, button: Button):
+        async def __handle_profile(cls, i: Interaction, user: User, button: Button):
             from kody.modules.dashboard.profile import (ProfileEmbed,
                                                         ProfileView)
 
             await i.response.edit_message(embed=ProfileEmbed(i.user, user), view=ProfileView(user))
 
         @classmethod
-        async def __handle_inventory(self, i: Interaction, user: User, button: Button):
+        async def __handle_inventory(cls, i: Interaction, user: User, button: Button):
             from kody.modules.dashboard.inventory import (InventoryEmbed,
                                                           InventoryView)
 
             await i.response.edit_message(embed=InventoryEmbed(i.user, user), view=InventoryView(user))
 
         @classmethod
-        async def __handle_badges(self, i: Interaction, user: User, button: Button):
+        async def __handle_badges(cls, i: Interaction, user: User, button: Button):
             pass
 
         @classmethod
-        async def __handle_shop(self, i: Interaction, user: User, button: Button):
+        async def __handle_shop(cls, i: Interaction, user: User, button: Button):
             pass
 
         @classmethod
-        async def __handle_quest(self, i: Interaction, user: User, button: Button):
+        async def __handle_quest(cls, i: Interaction, user: User, button: Button):
             cd = user.quest_cooldown
             quest_repo = QuestionRepository()
 
@@ -148,19 +148,19 @@ class DashboardView(View):
                 )
 
         @classmethod
-        async def __handle_vote(self, i: Interaction, user: User, button: Button):
+        async def __handle_vote(cls, i: Interaction, user: User, button: Button):
             await i.response.edit_message(embed=VoteEmbed(i.user, user), view=VoteView(user))
 
         @classmethod
-        async def __handle_daily(self, i: Interaction, user: User, button: Button):
+        async def __handle_daily(cls, i: Interaction, user: User, button: Button):
             pass
 
         @classmethod
-        async def __handle_config(self, i: Interaction, user: User, button: Button):
+        async def __handle_config(cls, i: Interaction, user: User, button: Button):
             from kody.modules.dashboard.config import ConfigEmbed, ConfigView
 
             await i.response.edit_message(embed=ConfigEmbed(i.user, user), view=ConfigView(user))
 
         @classmethod
-        async def __handle_help(self, i: Interaction, user: User, button: Button):
+        async def __handle_help(cls, i: Interaction, user: User, button: Button):
             pass

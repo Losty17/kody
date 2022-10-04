@@ -14,5 +14,5 @@ class InventoryEmbed(Embed):
         item_list = "\n".join(
             f"🔹 {item.amount} · {item.id} · `{item.id}`" for item in items)
 
-        self.title = "Inventário"
+        self.title = "🎒 Inventário"
         self.description = f"Inventário de {member.mention}\n\n{item_list}"

@@ -16,5 +16,5 @@ class BitsEmbed(Embed):
         bit_list = "\n".join(
             f"{NODE_EMOJIS[bit]} · {bits[bit]} · `{bit} bit` · {NODE_TRANSLATIONS[bit]}" for bit in bit_keys)
 
-        self.title = "Bits"
+        self.title = "💰 Bits"
         self.description = f"Inventário de bits de {member.mention}\n\n{bit_list}"

@@ -44,7 +44,7 @@ class HomeButton(Button):
     def __init__(self, user: User, *, row: int = 0, disabled: bool = False, style: ButtonStyle = ButtonStyle.gray):
         super().__init__(
             emoji="🏠",
-            label=t("votes.back"),
+            label=t("common.home"),
             user=user,
             key="back",
             callback=self.__handle_go_back,

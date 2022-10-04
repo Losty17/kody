@@ -1,12 +1,11 @@
 from datetime import datetime
 from random import choice
 
-from discord import Emoji, Member, Object
+from discord import Member
 from i18n import t
 from kody.components import Embed
 from kody.db.models.user import User
 from kody.utils import get_greeting
-from kody import kody
 
 
 class DashboardEmbed(Embed):

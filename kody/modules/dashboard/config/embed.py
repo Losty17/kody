@@ -7,7 +7,7 @@ class ConfigEmbed(Embed):
     def __init__(self, member: Member, user: User):
         super().__init__(member, user)
 
-        self.title = "Configurações"
+        self.title = "⚙️ Configurações"
 
         get_status = lambda key: "Ativado" if user.preferences[key] else "Desativado"
 
