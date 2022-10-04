@@ -17,8 +17,6 @@ class CommandTree(app_commands.CommandTree):
         if not user:
             user = User(
                 id=interaction.user.id,
-                preferences_col="1" if getenv(
-                    "ENVIRONMENT") != "production" else "0",
                 vip=True
             )
             user_repo.add(user)

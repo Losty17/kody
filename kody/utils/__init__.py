@@ -1,14 +1,14 @@
-from discord.ui import Button, Select, View
+from discord.ui import Item, View
 from i18n import t
 
 
-def find_child(view: View, _id: str) -> Button | Select | None:
-    return next((child for child in view.children if child.custom_id == _id), None)
+def find_child(view: View, _id: str) -> Item[View] | None:
+    return next((child for child in view.children if getattr(child, "custom_id") == _id), None)
 
 
 def get_greeting(hour):
     return (
-        t("dashboard.monring")
+        t("dashboard.morning")
         if 5 <= hour <= 11
         else t("dashboard.afternoon")
         if 12 <= hour <= 18
@@ -22,7 +22,4 @@ def get_keys(dict_):
 
 def switch_page(view: View, _id: str):
     for child in view.children:
-        if child.custom_id == _id:
-            child.disabled = True
-        else:
-            child.disabled = False
+        setattr(child, "disabled", getattr(child, "custom_id") == _id)

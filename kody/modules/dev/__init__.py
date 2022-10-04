@@ -1,14 +1,12 @@
 from discord import Interaction
 from discord.app_commands import Choice, Group, choices, describe
 from discord.ext import commands
-
-from ... import kody
-from ...db import NodeEnum
-from ...db.models import Item
-from ...db.repositories import UserRepository, ItemRepository
-from ...kody import KodyBot
-from ...utils.checks import is_owner
-from .. import BaseCog
+from kody import kody
+from kody.db import NodeEnum
+from kody.db.repositories import ItemRepository, UserRepository
+from kody.kodybot import KodyBot
+from kody.modules import BaseCog
+from kody.utils.checks import is_owner
 
 module_list = [Choice(name=module.split(".")[2], value=module)
                for module in kody.modules]

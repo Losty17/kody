@@ -34,7 +34,7 @@ class KodyBot(commands.Bot):
         self.modules = self.get_extensions(self.module_dir)
 
         self.dev_guilds = [Object(guild)
-                           for guild in getenv("GUILDS").split(",")]
+                           for guild in (getenv("GUILDS") or "").split(",")]
 
         self.logger = setup_logger()
 
@@ -109,4 +109,4 @@ class KodyBot(commands.Bot):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.logger.info(f'Logged in as {self.user} (ID: {self.user.id})')
+        self.logger.info(f'Logged in as {self.user}')

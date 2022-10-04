@@ -4,7 +4,7 @@ import discord
 from discord import Interaction, app_commands
 from discord.app_commands import AppCommandError
 from discord.ext import commands
-from ...kody import KodyBot
+from ...kodybot import KodyBot
 
 
 class Errors(commands.Cog):

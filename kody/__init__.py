@@ -1,13 +1,11 @@
-from os import getenv, listdir
-
-from discord import Intents
-from dotenv import load_dotenv
-
 import i18n
-
-from .kody import KodyBot
+from os import listdir
+from dotenv import load_dotenv
+from kody.kodybot import KodyBot
 
 load_dotenv()
+
+from .constants import *
 
 for folder in listdir("kody/i18n"):
     i18n.load_path.append(f"kody/i18n/{folder}")
@@ -15,10 +13,10 @@ for folder in listdir("kody/i18n"):
 i18n.set("fallback", "en")
 
 kody = KodyBot(
-    ">",
-    intents=Intents.all(),
-    application_id=int(getenv("APP_ID")),
-    owner_id=int(getenv("OWNER_ID"))
+    BOT_PREFIX,
+    intents=BOT_INTENTS,
+    application_id=APP_ID,
+    owner_id=OWNER_ID
 )
 
-kody.run(getenv("BOT_TOKEN"))
+kody.run(BOT_TOKEN)

@@ -2,8 +2,8 @@ import os
 
 from discord.ext import commands
 
-from ...db import Database
-from ...kody import KodyBot
+from kody.db import Database
+from kody.kodybot import KodyBot
 from .groups import KodyStaff
 
 
