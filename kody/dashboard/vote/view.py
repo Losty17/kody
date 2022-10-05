@@ -1,6 +1,6 @@
 
-from discord import ButtonStyle, Interaction
-from discord.ui import Button, View, button
+from discord import ButtonStyle
+from discord.ui import Button, View
 from i18n import t
 from kody.components.buttons import HomeButton
 from kody.db.models.user import User

@@ -7,8 +7,8 @@ from discord.ui import Modal, TextInput, View
 from kody.components import Button
 from kody.db.models import User
 from kody.db.repositories import UserRepository
-from kody.modules.dashboard.home import DashboardEmbed, DashboardView
-from kody.modules.dashboard.profile import ProfileEmbed
+from kody.dashboard.home import DashboardEmbed, DashboardView
+from kody.dashboard.profile import ProfileEmbed
 from kody.utils import find_child, switch_page
 
 
@@ -76,7 +76,7 @@ class ProfileView(View):
         if edit:
             self.remove_item(edit)
 
-        from kody.modules.dashboard.stats import StatsEmbed
+        from kody.dashboard.stats import StatsEmbed
         await i.response.edit_message(embed=StatsEmbed(i.user, user), view=self)
 
     async def __handle_go_back(self, i: Interaction, user: User, button: Button):

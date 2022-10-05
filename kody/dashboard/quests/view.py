@@ -1,13 +1,14 @@
 from random import shuffle
 
 from discord import ButtonStyle, Interaction, User
-from discord.ui import Button, View, button
+from discord.ui import Button, View
 from i18n import t
+from kody.components import KodyButton
+from kody.components.buttons.home_button import HomeButton
+from kody.dashboard.quests import QuestEmbed
 from kody.db.models import Question, User
 from kody.db.repositories import QuestionRepository, UserRepository
-from kody.modules.dashboard.quests import QuestEmbed
 from kody.utils import find_child
-from kody.components import Button as KButton
 
 
 class QuestView(View):
@@ -27,17 +28,9 @@ class QuestView(View):
                 user
             ))
 
-        self.add_item(KButton(
-            "🏠",
-            t("votes.back"),
-            user,
-            "back",
-            self.__handle_back,
-            row=1,
-            disabled=True
-        ))
+        self.add_item(HomeButton(user))
 
-        self.add_item(KButton(
+        self.add_item(KodyButton(
             "📚",
             t("questions.new_quest", count=user.quest_pool),
             user,
@@ -46,14 +39,6 @@ class QuestView(View):
             row=1,
             disabled=True
         ))
-
-    async def __handle_back(self, i: Interaction, user: User, button: Button):
-        from kody.modules.dashboard.home import DashboardEmbed, DashboardView
-
-        return await i.response.edit_message(
-            embed=DashboardEmbed(i.user, user),
-            view=DashboardView(user)
-        )
 
     async def __handle_new_quest(self, i: Interaction, user: User, button: Button):
         quest_repo = QuestionRepository()

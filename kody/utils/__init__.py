@@ -1,3 +1,5 @@
+from typing import TypedDict
+
 from discord.ui import Item, View
 from i18n import t
 
@@ -16,7 +18,7 @@ def get_greeting(hour):
     )
 
 
-def get_keys(dict_):
+def get_keys(dict_: TypedDict):
     return dict_.__annotations__.keys()
 
 

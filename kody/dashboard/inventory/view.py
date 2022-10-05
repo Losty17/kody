@@ -2,8 +2,8 @@ from discord import Interaction, Button as DButton
 from discord.ui import View
 from kody.components.buttons import Button, HomeButton
 from kody.db.models import User
-from kody.modules.dashboard.inventory import InventoryEmbed
-from kody.modules.dashboard.bits import BitsEmbed
+from kody.dashboard.inventory import InventoryEmbed
+from kody.dashboard.bits import BitsEmbed
 from kody.utils import switch_page
 
 

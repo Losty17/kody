@@ -4,7 +4,7 @@ from i18n import t
 from kody import KodyBot
 from kody.db.repositories import QuestionRepository, UserRepository
 from kody.modules import BaseCog
-from kody.modules.dashboard.quests import QuestEmbed, QuestView
+from kody.dashboard.quests import QuestEmbed, QuestView
 
 
 class Questions(BaseCog):
